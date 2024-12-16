@@ -12,8 +12,7 @@ const val JWT_CLAIM_NAVIDENT = "NAVident"
 
 fun ApplicationCall.getCallId(): String = this.request.headers[NAV_CALL_ID_HEADER].toString()
 
-fun ApplicationCall.getPersonident(): Personident? =
-    this.request.headers[NAV_PERSONIDENT_HEADER]?.let { Personident(it) }
+fun ApplicationCall.getPersonident(): Personident? = this.request.headers[NAV_PERSONIDENT_HEADER]?.let { Personident(it) }
 
 fun ApplicationCall.getConsumerClientId(): String? =
     getBearerHeader()?.let {
@@ -26,5 +25,4 @@ fun ApplicationCall.getNAVIdent(): String {
         ?: throw Error("Missing NAVident in private claims")
 }
 
-fun ApplicationCall.getBearerHeader(): String? =
-    this.request.headers[HttpHeaders.Authorization]?.removePrefix("Bearer ")
+fun ApplicationCall.getBearerHeader(): String? = this.request.headers[HttpHeaders.Authorization]?.removePrefix("Bearer ")

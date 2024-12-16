@@ -2,24 +2,23 @@ group = "no.nav.syfo"
 version = "0.0.1"
 
 val flywayVersion = "11.1.0"
-val hikariVersion = "5.1.0"
+val hikariVersion = "6.2.1"
 val postgresVersion = "42.7.4"
-val postgresEmbeddedVersion = "2.0.7"
-val kafkaVersion = "3.7.0"
-val logbackVersion = "1.5.7"
-val logstashEncoderVersion = "7.4"
+val postgresEmbeddedVersion = "2.1.0"
+val kafkaVersion = "3.9.0"
+val logbackVersion = "1.5.12"
+val logstashEncoderVersion = "8.0"
 val micrometerRegistryVersion = "1.12.2"
-val jacksonDatatypeVersion = "2.17.2"
-val ktorVersion = "3.0.1"
-val spekVersion = "2.0.19"
-val mockkVersion = "1.13.12"
-val nimbusJoseJwtVersion = "9.40"
-val kluentVersion = "1.73"
+val jacksonDatatypeVersion = "2.18.2"
+val ktorVersion = "3.0.2"
+val mockkVersion = "1.13.13"
+val nimbusJoseJwtVersion = "9.47"
+val kotlinVersion = "2.1.0"
 
 plugins {
-    kotlin("jvm") version "2.0.20"
-    id("com.gradleup.shadow") version "8.3.1"
-    id("org.jlleitschuh.gradle.ktlint") version "11.6.1"
+    kotlin("jvm") version "2.1.0"
+    id("com.gradleup.shadow") version "8.3.5"
+    id("org.jlleitschuh.gradle.ktlint") version "12.1.2"
 }
 
 repositories {
@@ -65,9 +64,7 @@ dependencies {
     testImplementation("io.mockk:mockk:$mockkVersion")
     testImplementation("io.ktor:ktor-client-mock:$ktorVersion")
     testImplementation("com.nimbusds:nimbus-jose-jwt:$nimbusJoseJwtVersion")
-    testImplementation("org.amshove.kluent:kluent:$kluentVersion")
-    testImplementation("org.spekframework.spek2:spek-dsl-jvm:$spekVersion")
-    testRuntimeOnly("org.spekframework.spek2:spek-runner-junit5:$spekVersion")
+    testImplementation("org.jetbrains.kotlin:kotlin-test:$kotlinVersion")
 }
 
 kotlin {
@@ -93,9 +90,7 @@ tasks {
     }
 
     test {
-        useJUnitPlatform {
-            includeEngines("spek2")
-        }
+        useJUnitPlatform()
         testLogging.showStandardStreams = true
     }
 }

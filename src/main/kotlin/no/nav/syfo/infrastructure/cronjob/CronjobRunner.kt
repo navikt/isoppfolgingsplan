@@ -11,52 +11,53 @@ import java.time.Duration
 
 class CronjobRunner(
     private val applicationState: ApplicationState,
-    private val leaderPodClient: LeaderPodClient
+    private val leaderPodClient: LeaderPodClient,
 ) {
-
     private val log = LoggerFactory.getLogger(CronjobRunner::class.java)
 
-    suspend fun start(cronjob: Cronjob) = coroutineScope {
-        val cronjobName = cronjob.javaClass.simpleName
-        val (initialDelay, intervalDelay) = delays(cronjob)
-        log.info(
-            "Scheduling start of $cronjobName: {} ms, {} ms",
-            StructuredArguments.keyValue("initialDelay", initialDelay),
-            StructuredArguments.keyValue("intervalDelay", intervalDelay)
-        )
-        delay(initialDelay)
+    suspend fun start(cronjob: Cronjob) =
+        coroutineScope {
+            val cronjobName = cronjob.javaClass.simpleName
+            val (initialDelay, intervalDelay) = delays(cronjob)
+            log.info(
+                "Scheduling start of $cronjobName: {} ms, {} ms",
+                StructuredArguments.keyValue("initialDelay", initialDelay),
+                StructuredArguments.keyValue("intervalDelay", intervalDelay),
+            )
+            delay(initialDelay)
 
-        while (applicationState.ready) {
-            val job = launch {
-                try {
-                    if (leaderPodClient.isLeader()) {
-                        val results = cronjob.run()
-                        val (success, failed) = results.partition { it.isSuccess }
-                        failed.forEach {
-                            log.error("Exception caught in $cronjobName", it.exceptionOrNull())
+            while (applicationState.ready) {
+                val job =
+                    launch {
+                        try {
+                            if (leaderPodClient.isLeader()) {
+                                val results = cronjob.run()
+                                val (success, failed) = results.partition { it.isSuccess }
+                                failed.forEach {
+                                    log.error("Exception caught in $cronjobName", it.exceptionOrNull())
+                                }
+                                if (failed.size + success.size > 0) {
+                                    log.info(
+                                        "Completed $cronjobName with result: {}, {}",
+                                        StructuredArguments.keyValue("failed", failed.size),
+                                        StructuredArguments.keyValue("updated", success.size),
+                                    )
+                                }
+                            } else {
+                                log.debug("Pod is not leader and will not perform cronjob")
+                            }
+                        } catch (ex: Exception) {
+                            log.error("Exception in $cronjobName. Job will run again after delay.", ex)
                         }
-                        if (failed.size + success.size > 0) {
-                            log.info(
-                                "Completed $cronjobName with result: {}, {}",
-                                StructuredArguments.keyValue("failed", failed.size),
-                                StructuredArguments.keyValue("updated", success.size)
-                            )
-                        }
-                    } else {
-                        log.debug("Pod is not leader and will not perform cronjob")
                     }
-                } catch (ex: Exception) {
-                    log.error("Exception in $cronjobName. Job will run again after delay.", ex)
+                delay(intervalDelay)
+                if (job.isActive) {
+                    log.info("Waiting for job to finish")
+                    job.join()
                 }
             }
-            delay(intervalDelay)
-            if (job.isActive) {
-                log.info("Waiting for job to finish")
-                job.join()
-            }
+            log.info("Ending $cronjobName due to failed liveness check ")
         }
-        log.info("Ending $cronjobName due to failed liveness check ")
-    }
 
     private fun delays(cronjob: Cronjob): Pair<Long, Long> {
         val initialDelay = Duration.ofMinutes(cronjob.initialDelayMinutes).toMillis()

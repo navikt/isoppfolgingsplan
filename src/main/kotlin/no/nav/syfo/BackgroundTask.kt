@@ -10,17 +10,18 @@ private val log: Logger = LoggerFactory.getLogger("no.nav.syfo")
 
 fun launchBackgroundTask(
     applicationState: ApplicationState,
-    action: suspend CoroutineScope.() -> Unit
-): Job = GlobalScope.launch(Dispatchers.Unbounded) {
-    try {
-        action()
-    } catch (ex: Exception) {
-        log.error("Exception received while launching background task. Terminating application.", ex)
-    } finally {
-        applicationState.alive = false
-        applicationState.ready = false
+    action: suspend CoroutineScope.() -> Unit,
+): Job =
+    GlobalScope.launch(Dispatchers.Unbounded) {
+        try {
+            action()
+        } catch (ex: Exception) {
+            log.error("Exception received while launching background task. Terminating application.", ex)
+        } finally {
+            applicationState.alive = false
+            applicationState.ready = false
+        }
     }
-}
 
 /*
 Use Dispatchers.Unbounded to allow unlimited number of coroutines to be dispatched. Without this
@@ -36,7 +37,11 @@ class UnboundedDispatcher private constructor() : CoroutineDispatcher() {
 
     private val threadPool = Executors.newCachedThreadPool()
     private val dispatcher = threadPool.asCoroutineDispatcher()
-    override fun dispatch(context: CoroutineContext, block: Runnable) {
+
+    override fun dispatch(
+        context: CoroutineContext,
+        block: Runnable,
+    ) {
         dispatcher.dispatch(context, block)
     }
 }

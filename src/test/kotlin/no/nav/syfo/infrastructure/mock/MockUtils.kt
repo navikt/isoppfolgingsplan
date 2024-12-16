@@ -7,11 +7,14 @@ import no.nav.syfo.util.configuredJacksonMapper
 
 val mapper = configuredJacksonMapper()
 
-fun <T> MockRequestHandleScope.respond(body: T, statusCode: HttpStatusCode = HttpStatusCode.OK): HttpResponseData =
+fun <T> MockRequestHandleScope.respond(
+    body: T,
+    statusCode: HttpStatusCode = HttpStatusCode.OK,
+): HttpResponseData =
     respond(
         mapper.writeValueAsString(body),
         statusCode,
-        headersOf(HttpHeaders.ContentType, "application/json")
+        headersOf(HttpHeaders.ContentType, "application/json"),
     )
 
 suspend inline fun <reified T> HttpRequestData.receiveBody(): T {

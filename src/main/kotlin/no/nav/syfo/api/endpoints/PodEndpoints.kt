@@ -1,24 +1,23 @@
 package no.nav.syfo.api.endpoints
 
 import io.ktor.http.*
-import io.ktor.server.application.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import no.nav.syfo.ApplicationState
 import no.nav.syfo.infrastructure.database.DatabaseInterface
 
-const val podLivenessPath = "/internal/is_alive"
-const val podReadinessPath = "/internal/is_ready"
-
-fun Routing.podEndpoints(applicationState: ApplicationState, database: DatabaseInterface) {
-    get(podLivenessPath) {
+fun Routing.podEndpoints(
+    applicationState: ApplicationState,
+    database: DatabaseInterface,
+) {
+    get("/internal/is_alive") {
         if (applicationState.alive) {
             call.respondText("I'm alive! :)")
         } else {
             call.respondText("I'm dead x_x", status = HttpStatusCode.InternalServerError)
         }
     }
-    get(podReadinessPath) {
+    get("/internal/is_ready") {
         if (applicationState.ready && database.isOk()) {
             call.respondText("I'm ready! :)")
         } else {

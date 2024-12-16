@@ -16,7 +16,7 @@ fun Application.installJwtAuthentication(jwtIssuerList: List<JwtIssuer>) {
     install(Authentication) {
         jwtIssuerList.forEach { jwtIssuer ->
             configureJwt(
-                jwtIssuer = jwtIssuer
+                jwtIssuer = jwtIssuer,
             )
         }
     }
@@ -31,12 +31,12 @@ private fun AuthenticationConfig.configureJwt(jwtIssuer: JwtIssuer) {
     jwt(name = jwtIssuer.jwtIssuerType.name) {
         verifier(
             jwkProvider = jwkProvider,
-            issuer = jwtIssuer.wellKnown.issuer
+            issuer = jwtIssuer.wellKnown.issuer,
         )
         validate { credential ->
             val credentialsHasExpectedAudience =
                 credential.inExpectedAudience(
-                    expectedAudience = jwtIssuer.acceptedAudienceList
+                    expectedAudience = jwtIssuer.acceptedAudienceList,
                 )
             if (credentialsHasExpectedAudience) {
                 JWTPrincipal(credential.payload)
@@ -44,7 +44,7 @@ private fun AuthenticationConfig.configureJwt(jwtIssuer: JwtIssuer) {
                 log.warn(
                     "Auth: Unexpected audience for jwt {}, {}",
                     StructuredArguments.keyValue("issuer", credential.payload.issuer),
-                    StructuredArguments.keyValue("audience", credential.payload.audience)
+                    StructuredArguments.keyValue("audience", credential.payload.audience),
                 )
                 null
             }

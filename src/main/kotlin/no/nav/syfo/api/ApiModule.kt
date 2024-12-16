@@ -37,7 +37,7 @@ fun Application.apiModule(
     environment: Environment,
     wellKnownInternalAzureAD: WellKnown,
     database: DatabaseInterface,
-    veilederTilgangskontrollClient: VeilederTilgangskontrollClient
+    veilederTilgangskontrollClient: VeilederTilgangskontrollClient,
 ) {
     installMetrics()
     installCallId()
@@ -45,13 +45,13 @@ fun Application.apiModule(
     installStatusPages()
     installJwtAuthentication(
         jwtIssuerList =
-        listOf(
-            JwtIssuer(
-                acceptedAudienceList = listOf(environment.azure.appClientId),
-                jwtIssuerType = JwtIssuerType.INTERNAL_AZUREAD,
-                wellKnown = wellKnownInternalAzureAD
-            )
-        )
+            listOf(
+                JwtIssuer(
+                    acceptedAudienceList = listOf(environment.azure.appClientId),
+                    jwtIssuerType = JwtIssuerType.INTERNAL_AZUREAD,
+                    wellKnown = wellKnownInternalAzureAD,
+                ),
+            ),
     )
 
     routing {

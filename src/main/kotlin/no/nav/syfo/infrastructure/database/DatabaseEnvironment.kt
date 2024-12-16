@@ -6,5 +6,5 @@ data class DatabaseEnvironment(
     val name: String,
     val username: String,
     val password: String,
-    val url: String
+    val url: String,
 )

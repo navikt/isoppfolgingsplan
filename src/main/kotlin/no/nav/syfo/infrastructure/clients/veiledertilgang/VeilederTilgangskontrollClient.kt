@@ -20,7 +20,7 @@ import org.slf4j.LoggerFactory
 class VeilederTilgangskontrollClient(
     private val azureAdClient: AzureAdClient,
     private val clientEnvironment: ClientEnvironment,
-    private val httpClient: HttpClient = httpClientDefault()
+    private val httpClient: HttpClient = httpClientDefault(),
 ) {
     private val tilgangskontrollPersonUrl = "${clientEnvironment.baseUrl}$TILGANGSKONTROLL_PERSON_PATH"
     private val tilgangskontrollBrukereUrl = "${clientEnvironment.baseUrl}$TILGANGSKONTROLL_BRUKERE_PATH"
@@ -28,12 +28,12 @@ class VeilederTilgangskontrollClient(
     suspend fun hasAccess(
         callId: String,
         personIdent: Personident,
-        token: String
+        token: String,
     ): Boolean {
         val onBehalfOfToken =
             azureAdClient.getOnBehalfOfToken(
                 scopeClientId = clientEnvironment.clientId,
-                token = token
+                token = token,
             )?.accessToken ?: throw RuntimeException("Failed to request access to Person: Failed to get OBO token")
 
         return try {
@@ -59,23 +59,25 @@ class VeilederTilgangskontrollClient(
     suspend fun veilederPersonerAccess(
         personidenter: List<Personident>,
         token: String,
-        callId: String
+        callId: String,
     ): List<Personident>? {
-        val oboToken = azureAdClient.getOnBehalfOfToken(
-            scopeClientId = clientEnvironment.clientId,
-            token = token
-        )?.accessToken
-            ?: throw RuntimeException("Failed to request access to list of persons: Failed to get OBO token")
+        val oboToken =
+            azureAdClient.getOnBehalfOfToken(
+                scopeClientId = clientEnvironment.clientId,
+                token = token,
+            )?.accessToken
+                ?: throw RuntimeException("Failed to request access to list of persons: Failed to get OBO token")
 
         val identer = personidenter.map { it.value }
         return try {
-            val response: HttpResponse = httpClient.post(tilgangskontrollBrukereUrl) {
-                header(HttpHeaders.Authorization, bearerHeader(oboToken))
-                header(NAV_CALL_ID_HEADER, callId)
-                accept(ContentType.Application.Json)
-                contentType(ContentType.Application.Json)
-                setBody(identer)
-            }
+            val response: HttpResponse =
+                httpClient.post(tilgangskontrollBrukereUrl) {
+                    header(HttpHeaders.Authorization, bearerHeader(oboToken))
+                    header(NAV_CALL_ID_HEADER, callId)
+                    accept(ContentType.Application.Json)
+                    contentType(ContentType.Application.Json)
+                    setBody(identer)
+                }
             Metrics.COUNT_CALL_TILGANGSKONTROLL_PERSONS_SUCCESS.increment()
             response.body<List<String>>().map { Personident(it) }
         } catch (e: ClientRequestException) {
@@ -96,12 +98,12 @@ class VeilederTilgangskontrollClient(
 
     private fun handleUnexpectedResponseException(
         response: HttpResponse,
-        callId: String
+        callId: String,
     ) {
         log.error(
             "Error while requesting access to person from istilgangskontroll with {}, {}",
             StructuredArguments.keyValue("statusCode", response.status.value.toString()),
-            StructuredArguments.keyValue("callId", callId)
+            StructuredArguments.keyValue("callId", callId),
         )
         Metrics.COUNT_CALL_TILGANGSKONTROLL_PERSON_FAIL.increment()
     }

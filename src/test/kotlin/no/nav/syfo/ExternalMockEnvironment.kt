@@ -11,7 +11,7 @@ fun wellKnownInternalAzureAD(): WellKnown {
     val uri = Paths.get(path).toUri().toURL()
     return WellKnown(
         issuer = "https://sts.issuer.net/veileder/v2",
-        jwksUri = uri.toString()
+        jwksUri = uri.toString(),
     )
 }
 
@@ -21,10 +21,11 @@ class ExternalMockEnvironment private constructor() {
     val environment = testEnvironment()
     val mockHttpClient = mockHttpClient(environment = environment)
     val wellKnownInternalAzureAD = wellKnownInternalAzureAD()
-    val azureAdClient = AzureAdClient(
-        azureEnvironment = environment.azure,
-        httpClient = mockHttpClient
-    )
+    val azureAdClient =
+        AzureAdClient(
+            azureEnvironment = environment.azure,
+            httpClient = mockHttpClient,
+        )
 
     companion object {
         val instance: ExternalMockEnvironment = ExternalMockEnvironment()

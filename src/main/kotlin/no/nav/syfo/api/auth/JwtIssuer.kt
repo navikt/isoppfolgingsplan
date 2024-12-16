@@ -5,9 +5,9 @@ import no.nav.syfo.infrastructure.clients.wellknown.WellKnown
 data class JwtIssuer(
     val acceptedAudienceList: List<String>,
     val jwtIssuerType: JwtIssuerType,
-    val wellKnown: WellKnown
+    val wellKnown: WellKnown,
 )
 
 enum class JwtIssuerType {
-    INTERNAL_AZUREAD
+    INTERNAL_AZUREAD,
 }
