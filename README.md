@@ -15,9 +15,7 @@ Applikasjon for å be om oppfølgingsplan fra arbeidsgiver i sykefraværsoppføl
 
 ##### Test Libraries:
 
-* Kluent
 * Mockk
-* Spek
 
 #### Requirements
 
