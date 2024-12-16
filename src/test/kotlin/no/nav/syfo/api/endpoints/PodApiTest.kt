@@ -14,7 +14,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
-object PodApiSpek {
+object PodApiTest {
     private val database = TestDatabase()
     private val databaseNotResponding = TestDatabaseNotResponding()
 
