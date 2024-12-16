@@ -14,7 +14,7 @@ import java.time.LocalDateTime
 import java.time.ZoneId
 import java.util.*
 
-const val keyId = "localhost-signer"
+const val KEY_ID = "localhost-signer"
 
 // Mock of JWT-token supplied by AzureAD. KeyId must match kid in jwkset.json
 fun generateJWT(
@@ -22,14 +22,14 @@ fun generateJWT(
     issuer: String,
     navIdent: String? = null,
     subject: String? = null,
-    expiry: LocalDateTime? = LocalDateTime.now().plusHours(1)
+    expiry: LocalDateTime? = LocalDateTime.now().plusHours(1),
 ): String {
     val now = Date()
     val key = getDefaultRSAKey()
     val alg = Algorithm.RSA256(key.toRSAPublicKey(), key.toRSAPrivateKey())
 
     return JWT.create()
-        .withKeyId(keyId)
+        .withKeyId(KEY_ID)
         .withSubject(subject ?: "subject")
         .withIssuer(issuer)
         .withAudience(audience)
@@ -45,7 +45,7 @@ fun generateJWT(
 }
 
 private fun getDefaultRSAKey(): RSAKey {
-    return getJWKSet().getKeyByKeyId(keyId) as RSAKey
+    return getJWKSet().getKeyByKeyId(KEY_ID) as RSAKey
 }
 
 private fun getJWKSet(): JWKSet {

@@ -13,11 +13,12 @@ import org.slf4j.LoggerFactory
 import java.net.InetAddress
 
 class LeaderPodClient(
-    private val electorPath: String
+    private val electorPath: String,
 ) {
-    private val httpClient = HttpClient(Apache) {
-        expectSuccess = true
-    }
+    private val httpClient =
+        HttpClient(Apache) {
+            expectSuccess = true
+        }
 
     private val objectMapper: ObjectMapper = configuredJacksonMapper()
 
@@ -26,12 +27,14 @@ class LeaderPodClient(
             val electorUrl = getElectorUrl(electorPath)
             log.debug("Looking for leader at url=$electorUrl")
             return runBlocking {
-                val response: HttpResponse = httpClient.get(electorUrl) {
-                    accept(ContentType.Text.Plain)
-                }
-                val leaderPodDTO: LeaderPodDTO = objectMapper.readValue(
-                    response.bodyAsText()
-                )
+                val response: HttpResponse =
+                    httpClient.get(electorUrl) {
+                        accept(ContentType.Text.Plain)
+                    }
+                val leaderPodDTO: LeaderPodDTO =
+                    objectMapper.readValue(
+                        response.bodyAsText(),
+                    )
                 val hostname: String = InetAddress.getLocalHost().hostName
 
                 if (hostname == leaderPodDTO.name) {

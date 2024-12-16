@@ -5,5 +5,5 @@ class KafkaEnvironment(
     val aivenCredstorePassword: String,
     val aivenTruststoreLocation: String,
     val aivenSecurityProtocol: String,
-    val aivenBootstrapServers: String
+    val aivenBootstrapServers: String,
 )

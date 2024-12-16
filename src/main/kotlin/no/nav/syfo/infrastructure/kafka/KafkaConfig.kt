@@ -12,7 +12,7 @@ import java.util.*
 
 inline fun <reified Deserializer> kafkaAivenConsumerConfig(
     kafkaEnvironment: KafkaEnvironment,
-    offsetResetStrategy: OffsetResetStrategy
+    offsetResetStrategy: OffsetResetStrategy,
 ): Properties {
     return Properties().apply {
         putAll(commonKafkaAivenConfig(kafkaEnvironment))
@@ -27,9 +27,7 @@ inline fun <reified Deserializer> kafkaAivenConsumerConfig(
     }
 }
 
-inline fun <reified Serializer> kafkaAivenProducerConfig(
-    kafkaEnvironment: KafkaEnvironment
-): Properties {
+inline fun <reified Serializer> kafkaAivenProducerConfig(kafkaEnvironment: KafkaEnvironment): Properties {
     return Properties().apply {
         putAll(commonKafkaAivenConfig(kafkaEnvironment))
         this[ProducerConfig.ACKS_CONFIG] = "all"
@@ -42,18 +40,17 @@ inline fun <reified Serializer> kafkaAivenProducerConfig(
     }
 }
 
-fun commonKafkaAivenConfig(
-    kafkaEnvironment: KafkaEnvironment
-) = Properties().apply {
-    this[SaslConfigs.SASL_MECHANISM] = "PLAIN"
-    this[CommonClientConfigs.BOOTSTRAP_SERVERS_CONFIG] = kafkaEnvironment.aivenBootstrapServers
-    this[CommonClientConfigs.SECURITY_PROTOCOL_CONFIG] = kafkaEnvironment.aivenSecurityProtocol
-    this[SslConfigs.SSL_ENDPOINT_IDENTIFICATION_ALGORITHM_CONFIG] = ""
-    this[SslConfigs.SSL_TRUSTSTORE_TYPE_CONFIG] = "jks"
-    this[SslConfigs.SSL_KEYSTORE_TYPE_CONFIG] = "PKCS12"
-    this[SslConfigs.SSL_TRUSTSTORE_LOCATION_CONFIG] = kafkaEnvironment.aivenTruststoreLocation
-    this[SslConfigs.SSL_TRUSTSTORE_PASSWORD_CONFIG] = kafkaEnvironment.aivenCredstorePassword
-    this[SslConfigs.SSL_KEYSTORE_LOCATION_CONFIG] = kafkaEnvironment.aivenKeystoreLocation
-    this[SslConfigs.SSL_KEYSTORE_PASSWORD_CONFIG] = kafkaEnvironment.aivenCredstorePassword
-    this[SslConfigs.SSL_KEY_PASSWORD_CONFIG] = kafkaEnvironment.aivenCredstorePassword
-}
+fun commonKafkaAivenConfig(kafkaEnvironment: KafkaEnvironment) =
+    Properties().apply {
+        this[SaslConfigs.SASL_MECHANISM] = "PLAIN"
+        this[CommonClientConfigs.BOOTSTRAP_SERVERS_CONFIG] = kafkaEnvironment.aivenBootstrapServers
+        this[CommonClientConfigs.SECURITY_PROTOCOL_CONFIG] = kafkaEnvironment.aivenSecurityProtocol
+        this[SslConfigs.SSL_ENDPOINT_IDENTIFICATION_ALGORITHM_CONFIG] = ""
+        this[SslConfigs.SSL_TRUSTSTORE_TYPE_CONFIG] = "jks"
+        this[SslConfigs.SSL_KEYSTORE_TYPE_CONFIG] = "PKCS12"
+        this[SslConfigs.SSL_TRUSTSTORE_LOCATION_CONFIG] = kafkaEnvironment.aivenTruststoreLocation
+        this[SslConfigs.SSL_TRUSTSTORE_PASSWORD_CONFIG] = kafkaEnvironment.aivenCredstorePassword
+        this[SslConfigs.SSL_KEYSTORE_LOCATION_CONFIG] = kafkaEnvironment.aivenKeystoreLocation
+        this[SslConfigs.SSL_KEYSTORE_PASSWORD_CONFIG] = kafkaEnvironment.aivenCredstorePassword
+        this[SslConfigs.SSL_KEY_PASSWORD_CONFIG] = kafkaEnvironment.aivenCredstorePassword
+    }

@@ -5,9 +5,7 @@ import java.time.LocalDateTime
 
 data class AzureAdToken(
     val accessToken: String,
-    val expires: LocalDateTime
+    val expires: LocalDateTime,
 ) : Serializable {
-
-    fun isExpired(): Boolean =
-        expires < LocalDateTime.now().plusSeconds(60)
+    fun isExpired(): Boolean = expires < LocalDateTime.now().plusSeconds(60)
 }

@@ -19,12 +19,15 @@ object PodApiSpek : Spek({
     val database = TestDatabase()
     val databaseNotResponding = TestDatabaseNotResponding()
 
-    fun ApplicationTestBuilder.setupPodApi(database: DatabaseInterface, applicationState: ApplicationState) {
+    fun ApplicationTestBuilder.setupPodApi(
+        database: DatabaseInterface,
+        applicationState: ApplicationState,
+    ) {
         application {
             routing {
                 podEndpoints(
                     applicationState = applicationState,
-                    database = database
+                    database = database,
                 )
             }
         }
@@ -35,7 +38,7 @@ object PodApiSpek : Spek({
             testApplication {
                 setupPodApi(
                     database = database,
-                    applicationState = ApplicationState(alive = true, ready = true)
+                    applicationState = ApplicationState(alive = true, ready = true),
                 )
 
                 val response = client.get("/internal/is_alive")
@@ -47,7 +50,7 @@ object PodApiSpek : Spek({
             testApplication {
                 setupPodApi(
                     database = database,
-                    applicationState = ApplicationState(alive = true, ready = true)
+                    applicationState = ApplicationState(alive = true, ready = true),
                 )
 
                 val response = client.get("/internal/is_ready")
@@ -62,7 +65,7 @@ object PodApiSpek : Spek({
             testApplication {
                 setupPodApi(
                     database = database,
-                    applicationState = ApplicationState(alive = false, ready = false)
+                    applicationState = ApplicationState(alive = false, ready = false),
                 )
 
                 val response = client.get("/internal/is_alive")
@@ -75,7 +78,7 @@ object PodApiSpek : Spek({
             testApplication {
                 setupPodApi(
                     database = database,
-                    applicationState = ApplicationState(alive = false, ready = false)
+                    applicationState = ApplicationState(alive = false, ready = false),
                 )
 
                 val response = client.get("/internal/is_ready")
@@ -90,7 +93,7 @@ object PodApiSpek : Spek({
             testApplication {
                 setupPodApi(
                     database = databaseNotResponding,
-                    applicationState = ApplicationState(alive = true, ready = true)
+                    applicationState = ApplicationState(alive = true, ready = true),
                 )
 
                 val response = client.get("/internal/is_alive")
@@ -102,7 +105,7 @@ object PodApiSpek : Spek({
             testApplication {
                 setupPodApi(
                     database = databaseNotResponding,
-                    applicationState = ApplicationState(alive = true, ready = true)
+                    applicationState = ApplicationState(alive = true, ready = true),
                 )
 
                 val response = client.get("/internal/is_ready")

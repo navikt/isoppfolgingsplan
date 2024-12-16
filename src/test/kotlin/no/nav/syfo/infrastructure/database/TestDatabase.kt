@@ -5,11 +5,12 @@ import org.flywaydb.core.Flyway
 import java.sql.Connection
 
 class TestDatabase : DatabaseInterface {
-    private val pg: EmbeddedPostgres = try {
-        EmbeddedPostgres.start()
-    } catch (e: Exception) {
-        EmbeddedPostgres.builder().start()
-    }
+    private val pg: EmbeddedPostgres =
+        try {
+            EmbeddedPostgres.start()
+        } catch (e: Exception) {
+            EmbeddedPostgres.builder().start()
+        }
 
     override val connection: Connection
         get() = pg.postgresDatabase.connection.apply { autoCommit = false }
@@ -27,14 +28,7 @@ class TestDatabase : DatabaseInterface {
 }
 
 fun TestDatabase.dropData() {
-    val queryList = listOf(
-        """
-        DELETE FROM SEN_OPPFOLGING_KANDIDAT
-        """.trimIndent(),
-        """
-        DELETE FROM SEN_OPPFOLGING_VURDERING
-        """.trimIndent()
-    )
+    val queryList = emptyList<String>()
     this.connection.use { connection ->
         queryList.forEach { query ->
             connection.prepareStatement(query).execute()
@@ -44,7 +38,6 @@ fun TestDatabase.dropData() {
 }
 
 class TestDatabaseNotResponding : DatabaseInterface {
-
     override val connection: Connection
         get() = throw Exception("Not working")
 }

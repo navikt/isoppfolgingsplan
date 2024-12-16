@@ -12,11 +12,11 @@ import org.slf4j.LoggerFactory
 
 class AzureAdClient(
     private val azureEnvironment: AzureEnvironment,
-    private val httpClient: HttpClient = httpClientProxy()
+    private val httpClient: HttpClient = httpClientProxy(),
 ) {
     suspend fun getOnBehalfOfToken(
         scopeClientId: String,
-        token: String
+        token: String,
     ): AzureAdToken? =
         getAccessToken(
             Parameters.build {
@@ -27,18 +27,19 @@ class AzureAdClient(
                 append("assertion", token)
                 append("scope", "api://$scopeClientId/.default")
                 append("requested_token_use", "on_behalf_of")
-            }
+            },
         )?.toAzureAdToken()
 
     suspend fun getSystemToken(scopeClientId: String): AzureAdToken? {
-        val azureAdTokenResponse = getAccessToken(
-            Parameters.build {
-                append("client_id", azureEnvironment.appClientId)
-                append("client_secret", azureEnvironment.appClientSecret)
-                append("grant_type", "client_credentials")
-                append("scope", "api://$scopeClientId/.default")
-            }
-        )
+        val azureAdTokenResponse =
+            getAccessToken(
+                Parameters.build {
+                    append("client_id", azureEnvironment.appClientId)
+                    append("client_secret", azureEnvironment.appClientSecret)
+                    append("grant_type", "client_credentials")
+                    append("scope", "api://$scopeClientId/.default")
+                },
+            )
         return azureAdTokenResponse?.toAzureAdToken()
     }
 
@@ -58,7 +59,7 @@ class AzureAdClient(
     private fun handleUnexpectedResponseException(responseException: ResponseException) {
         log.error(
             "Error while requesting AzureAdAccessToken with statusCode=${responseException.response.status.value}",
-            responseException
+            responseException,
         )
     }
 
