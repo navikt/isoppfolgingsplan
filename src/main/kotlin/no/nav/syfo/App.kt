@@ -32,7 +32,6 @@ fun main() {
             azureAdClient = azureAdClient,
             clientEnvironment = environment.clients.istilgangskontroll,
         )
-
     val applicationEngineEnvironment =
         applicationEnvironment {
             log = logger
