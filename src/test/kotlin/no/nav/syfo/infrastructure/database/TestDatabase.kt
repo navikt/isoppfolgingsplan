@@ -28,7 +28,12 @@ class TestDatabase : DatabaseInterface {
 }
 
 fun TestDatabase.dropData() {
-    val queryList = emptyList<String>()
+    val queryList =
+        listOf(
+            """
+            DELETE FROM FORESPORSEL
+            """.trimIndent(),
+        )
     this.connection.use { connection ->
         queryList.forEach { query ->
             connection.prepareStatement(query).execute()
