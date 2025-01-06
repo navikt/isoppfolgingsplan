@@ -29,14 +29,12 @@ class ForesporselRepository(val database: DatabaseInterface) : IForesporselRepos
         }
     }
 
-    override fun getForesporsel(foresporselUuid: UUID): Foresporsel? {
+    override fun getForesporsler(personident: Personident): List<Foresporsel> {
         return database.connection.use { connection ->
             connection.prepareStatement(GET_FORESPORSEL).use {
-                it.setString(1, foresporselUuid.toString())
+                it.setString(1, personident.value)
                 it.executeQuery()
-                    .toList { toPForesporsel() }
-                    .firstOrNull()
-                    ?.toForesporsel()
+                    .toList { toPForesporsel().toForesporsel() }
             }
         }
     }
@@ -60,7 +58,7 @@ class ForesporselRepository(val database: DatabaseInterface) : IForesporselRepos
             """
                 SELECT *
                 FROM foresporsel
-                WHERE uuid = ?
+                WHERE arbeidstaker_personident = ?
             """
     }
 }

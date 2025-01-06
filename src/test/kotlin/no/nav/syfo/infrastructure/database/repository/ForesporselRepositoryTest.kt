@@ -1,15 +1,18 @@
 package no.nav.syfo.infrastructure.database.repository
 
 import no.nav.syfo.ExternalMockEnvironment
+import no.nav.syfo.UserConstants
 import no.nav.syfo.generator.generateForsporsel
 import no.nav.syfo.infrastructure.database.dropData
-import org.junit.jupiter.api.Assertions.assertEquals
+import no.nav.syfo.shouldBeEqualTo
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import java.time.temporal.ChronoUnit
 import java.util.*
 
-object ForesporselRepositoryTest {
+class ForesporselRepositoryTest {
     private val externalMockEnvironment = ExternalMockEnvironment.instance
     private val database = externalMockEnvironment.database
     private val foresporselRepository = ForesporselRepository(database)
@@ -19,40 +22,78 @@ object ForesporselRepositoryTest {
         database.dropData()
     }
 
-    @Test
-    fun `creates a new Foresporsel`() {
-        val foresporsel = generateForsporsel()
+    @Nested
+    @DisplayName("Create new Foresporsel")
+    inner class CreateForesporselTests {
+        @Test
+        fun `creates a new Foresporsel`() {
+            val foresporsel = generateForsporsel()
 
-        val createdForesporsel = foresporselRepository.createForesporsel(foresporsel)
+            val createdForesporsel = foresporselRepository.createForesporsel(foresporsel)
 
-        assertEquals(createdForesporsel.uuid, foresporsel.uuid)
-        assertEquals(createdForesporsel.arbeidstakerPersonident, foresporsel.arbeidstakerPersonident)
-        assertEquals(createdForesporsel.virksomhetsnummer, foresporsel.virksomhetsnummer)
-        assertEquals(createdForesporsel.narmestelederPersonident, foresporsel.narmestelederPersonident)
-        assertEquals(
-            createdForesporsel.createdAt.truncatedTo(ChronoUnit.MILLIS),
-            foresporsel.createdAt.truncatedTo(ChronoUnit.MILLIS)
-        )
-
-        createdForesporsel.uuid shouldBeEqualTo foresporsel.uuid
+            createdForesporsel.uuid shouldBeEqualTo foresporsel.uuid
+            createdForesporsel.arbeidstakerPersonident shouldBeEqualTo foresporsel.arbeidstakerPersonident
+            createdForesporsel.virksomhetsnummer shouldBeEqualTo foresporsel.virksomhetsnummer
+            createdForesporsel.narmestelederPersonident shouldBeEqualTo foresporsel.narmestelederPersonident
+            createdForesporsel.createdAt.truncatedTo(ChronoUnit.MILLIS) shouldBeEqualTo
+                foresporsel.createdAt.truncatedTo(ChronoUnit.MILLIS)
+        }
     }
 
-    @Test
-    fun `gets Foresporsel`() {
-        val foresporsel = generateForsporsel()
-        val createdForesporsel = foresporselRepository.createForesporsel(foresporsel)
+    @Nested
+    @DisplayName("Get Foresporsler for personident")
+    inner class GetForesporslerTests {
+        @Test
+        fun `gets Foresporsler`() {
+            val foresporsel = generateForsporsel()
+            val createdForesporsel = foresporselRepository.createForesporsel(foresporsel)
 
-        val fetchedForesporsel = foresporselRepository.getForesporsel(foresporsel.uuid)
+            val fetchedForesporsel = foresporselRepository.getForesporsler(foresporsel.arbeidstakerPersonident)
 
-        assertEquals(fetchedForesporsel, createdForesporsel)
-    }
+            fetchedForesporsel.first() shouldBeEqualTo createdForesporsel
+        }
 
-    @Test
-    fun `gets null when no Foresporsel`() {
-        val fetchedForesporsel = foresporselRepository.getForesporsel(UUID.randomUUID())
+        @Test
+        fun `gets Foresporsler only for given personident`() {
+            val foresporsel = generateForsporsel()
+            val otherForesporsel =
+                foresporsel.copy(
+                    uuid = UUID.randomUUID(),
+                    arbeidstakerPersonident = UserConstants.ARBEIDSTAKER_PERSONIDENT_2,
+                )
+            foresporselRepository.createForesporsel(foresporsel)
+            foresporselRepository.createForesporsel(otherForesporsel)
 
-        assertEquals(fetchedForesporsel, null)
+            val fetchedForesporsel = foresporselRepository.getForesporsler(foresporsel.arbeidstakerPersonident)
+
+            fetchedForesporsel.size shouldBeEqualTo 1
+            fetchedForesporsel.first().arbeidstakerPersonident shouldBeEqualTo foresporsel.arbeidstakerPersonident
+            fetchedForesporsel.first().uuid shouldBeEqualTo foresporsel.uuid
+        }
+
+        @Test
+        fun `gets several Foresporsler for given personident`() {
+            val foresporsel = generateForsporsel()
+            val otherForesporsel =
+                foresporsel.copy(
+                    uuid = UUID.randomUUID(),
+                )
+            foresporselRepository.createForesporsel(foresporsel)
+            foresporselRepository.createForesporsel(otherForesporsel)
+
+            val fetchedForesporsel = foresporselRepository.getForesporsler(foresporsel.arbeidstakerPersonident)
+
+            fetchedForesporsel.size shouldBeEqualTo 2
+        }
+
+        @Test
+        fun `gets null when no Foresporsel`() {
+            val fetchedForesporsel =
+                foresporselRepository.getForesporsler(
+                    personident = UserConstants.ARBEIDSTAKER_PERSONIDENT,
+                )
+
+            fetchedForesporsel.size shouldBeEqualTo 0
+        }
     }
 }
-
-infix fun <T> T.shouldBeEqualTo(other: T) = assertEquals(this, other)

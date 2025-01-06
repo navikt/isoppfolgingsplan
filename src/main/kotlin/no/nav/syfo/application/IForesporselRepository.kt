@@ -1,10 +1,10 @@
 package no.nav.syfo.application
 
 import no.nav.syfo.domain.Foresporsel
-import java.util.*
+import no.nav.syfo.domain.Personident
 
 interface IForesporselRepository {
     fun createForesporsel(foresporsel: Foresporsel): Foresporsel
 
-    fun getForesporsel(foresporselUuid: UUID): Foresporsel?
+    fun getForesporsler(personident: Personident): List<Foresporsel>
 }
