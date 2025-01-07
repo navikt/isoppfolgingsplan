@@ -7,7 +7,6 @@ import io.ktor.server.routing.*
 import no.nav.syfo.api.model.ForesporselRequestDTO
 import no.nav.syfo.api.model.ForesporselResponseDTO
 import no.nav.syfo.application.ForesporselService
-import no.nav.syfo.domain.Foresporsel
 import no.nav.syfo.domain.Personident
 import no.nav.syfo.domain.Veilederident
 import no.nav.syfo.domain.Virksomhetsnummer
@@ -54,14 +53,13 @@ fun Route.registerOppfolgingsplanEndpoints(
                 personident = Personident(requestDTO.arbeidstakerPersonident),
                 veilederTilgangskontrollClient = veilederTilgangskontrollClient,
             ) {
-                val foresporsel =
-                    Foresporsel(
+                val result =
+                    foresporselService.createForesporsel(
                         arbeidstakerPersonident = Personident(requestDTO.arbeidstakerPersonident),
                         veilederident = Veilederident(requestDTO.veilederident),
                         virksomhetsnummer = Virksomhetsnummer(requestDTO.virksomhetsnummer),
                         narmestelederPersonident = Personident(requestDTO.narmestelederPersonident),
                     )
-                val result = foresporselService.storeAndSendToNarmesteleder(foresporsel)
 
                 if (result.isSuccess) {
                     call.respond(HttpStatusCode.Created, ForesporselResponseDTO.fromForesporsel(result.getOrNull()!!))

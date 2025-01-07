@@ -27,14 +27,6 @@ data class Foresporsel private constructor(
         narmestelederPersonident = narmestelederPersonident,
     )
 
-    fun copyForTest(
-        uuid: UUID,
-        arbeidstakerPersonident: Personident = this.arbeidstakerPersonident,
-    ) = this.copy(
-        uuid = uuid,
-        arbeidstakerPersonident = arbeidstakerPersonident,
-    )
-
     companion object {
         fun createFromDatabase(
             uuid: UUID,
