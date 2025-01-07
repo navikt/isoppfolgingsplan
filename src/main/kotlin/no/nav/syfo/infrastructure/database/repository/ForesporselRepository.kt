@@ -7,7 +7,9 @@ import no.nav.syfo.domain.Veilederident
 import no.nav.syfo.domain.Virksomhetsnummer
 import no.nav.syfo.infrastructure.database.DatabaseInterface
 import no.nav.syfo.infrastructure.database.toList
+import no.nav.syfo.util.nowUTC
 import java.sql.ResultSet
+import java.sql.SQLException
 import java.time.OffsetDateTime
 import java.util.*
 
@@ -39,6 +41,20 @@ class ForesporselRepository(val database: DatabaseInterface) : IForesporselRepos
         }
     }
 
+    override fun setPublishedAt(foresporselUuid: UUID) {
+        database.connection.use { connection ->
+            connection.prepareStatement(SET_PUBLISHED_AT).use {
+                it.setObject(1, nowUTC())
+                it.setString(2, foresporselUuid.toString())
+                val updated = it.executeUpdate()
+                if (updated != 1) {
+                    throw SQLException("Expected a single row to be updated, got update count $updated")
+                }
+            }
+            connection.commit()
+        }
+    }
+
     companion object {
         private const val CREATE_FORESPORSEL =
             """
@@ -59,6 +75,13 @@ class ForesporselRepository(val database: DatabaseInterface) : IForesporselRepos
                 SELECT *
                 FROM foresporsel
                 WHERE arbeidstaker_personident = ?
+            """
+
+        private const val SET_PUBLISHED_AT =
+            """
+                UPDATE foresporsel
+                SET published_at = ?
+                WHERE uuid = ?
             """
     }
 }
