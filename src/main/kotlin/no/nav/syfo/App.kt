@@ -6,11 +6,19 @@ import io.ktor.server.config.*
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
 import no.nav.syfo.api.apiModule
+import no.nav.syfo.application.ForesporselService
 import no.nav.syfo.infrastructure.clients.azuread.AzureAdClient
 import no.nav.syfo.infrastructure.clients.veiledertilgang.VeilederTilgangskontrollClient
 import no.nav.syfo.infrastructure.clients.wellknown.getWellKnown
 import no.nav.syfo.infrastructure.database.applicationDatabase
 import no.nav.syfo.infrastructure.database.databaseModule
+import no.nav.syfo.infrastructure.database.repository.ForesporselRepository
+import no.nav.syfo.infrastructure.kafka.VarselProducer
+import no.nav.syfo.infrastructure.kafka.esyfovarsel.EsyfovarselHendelse
+import no.nav.syfo.infrastructure.kafka.esyfovarsel.EsyfovarselHendelseProducer
+import no.nav.syfo.infrastructure.kafka.esyfovarsel.EsyfovarselHendelseSerializer
+import no.nav.syfo.infrastructure.kafka.kafkaAivenProducerConfig
+import org.apache.kafka.clients.producer.KafkaProducer
 import org.slf4j.LoggerFactory
 import java.util.concurrent.TimeUnit
 
@@ -31,6 +39,20 @@ fun main() {
         VeilederTilgangskontrollClient(
             azureAdClient = azureAdClient,
             clientEnvironment = environment.clients.istilgangskontroll,
+        )
+    val kafkaProducer =
+        KafkaProducer<String, EsyfovarselHendelse>(
+            kafkaAivenProducerConfig<EsyfovarselHendelseSerializer>(
+                kafkaEnvironment = environment.kafka
+            ),
+        )
+    val narmesteLederVarselProducer =
+        EsyfovarselHendelseProducer(
+            producer = kafkaProducer,
+        )
+    val varselProducer =
+        VarselProducer(
+            narmesteLederVarselProducer = narmesteLederVarselProducer,
         )
     val applicationEngineEnvironment =
         applicationEnvironment {
@@ -54,12 +76,20 @@ fun main() {
                     databaseEnvironment = environment.database,
                 )
 
+                val foresporselRepository = ForesporselRepository(applicationDatabase)
+                val foresporselService =
+                    ForesporselService(
+                        varselProducer = varselProducer,
+                        repository = foresporselRepository,
+                    )
+
                 apiModule(
                     applicationState = applicationState,
                     environment = environment,
                     wellKnownInternalAzureAD = wellKnownInternalAzureAD,
                     database = applicationDatabase,
                     veilederTilgangskontrollClient = veilederTilgangskontrollClient,
+                    foresporselService = foresporselService,
                 )
                 monitor.subscribe(ApplicationStarted) {
                     applicationState.ready = true

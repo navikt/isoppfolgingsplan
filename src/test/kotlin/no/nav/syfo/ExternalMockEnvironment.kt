@@ -1,5 +1,7 @@
 package no.nav.syfo
 
+import io.mockk.mockk
+import no.nav.syfo.application.IVarselProducer
 import no.nav.syfo.infrastructure.clients.azuread.AzureAdClient
 import no.nav.syfo.infrastructure.clients.wellknown.WellKnown
 import no.nav.syfo.infrastructure.database.TestDatabase
@@ -26,6 +28,7 @@ class ExternalMockEnvironment private constructor() {
             azureEnvironment = environment.azure,
             httpClient = mockHttpClient,
         )
+    val varselProducer = mockk<IVarselProducer>(relaxed = true)
 
     companion object {
         val instance: ExternalMockEnvironment = ExternalMockEnvironment()

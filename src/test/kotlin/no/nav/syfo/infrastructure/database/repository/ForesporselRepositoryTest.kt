@@ -57,7 +57,7 @@ class ForesporselRepositoryTest {
         fun `gets Foresporsler only for given personident`() {
             val foresporsel = generateForsporsel()
             val otherForesporsel =
-                foresporsel.copy(
+                foresporsel.copyForTest(
                     uuid = UUID.randomUUID(),
                     arbeidstakerPersonident = UserConstants.ARBEIDSTAKER_PERSONIDENT_2,
                 )
@@ -75,7 +75,7 @@ class ForesporselRepositoryTest {
         fun `gets several Foresporsler for given personident`() {
             val foresporsel = generateForsporsel()
             val otherForesporsel =
-                foresporsel.copy(
+                foresporsel.copyForTest(
                     uuid = UUID.randomUUID(),
                 )
             foresporselRepository.createForesporsel(foresporsel)

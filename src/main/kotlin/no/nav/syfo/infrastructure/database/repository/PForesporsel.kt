@@ -18,7 +18,7 @@ data class PForesporsel(
     val publishedAt: OffsetDateTime?,
 ) {
     fun toForesporsel() =
-        Foresporsel(
+        Foresporsel.createFromDatabase(
             uuid = uuid,
             createdAt = createdAt,
             arbeidstakerPersonident = arbeidstakerPersonident,
