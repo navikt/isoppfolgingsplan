@@ -10,6 +10,7 @@ import no.nav.syfo.application.ForesporselService
 import no.nav.syfo.infrastructure.clients.azuread.AzureAdClient
 import no.nav.syfo.infrastructure.clients.veiledertilgang.VeilederTilgangskontrollClient
 import no.nav.syfo.infrastructure.clients.wellknown.getWellKnown
+import no.nav.syfo.infrastructure.cronjob.launchCronjobs
 import no.nav.syfo.infrastructure.database.applicationDatabase
 import no.nav.syfo.infrastructure.database.databaseModule
 import no.nav.syfo.infrastructure.database.repository.ForesporselRepository
@@ -94,6 +95,10 @@ fun main() {
                 monitor.subscribe(ApplicationStarted) {
                     applicationState.ready = true
                     logger.info("Application is ready, running Java VM ${Runtime.version()}")
+                    launchCronjobs(
+                        applicationState = applicationState,
+                        environment = environment,
+                    )
                 }
             },
         )
