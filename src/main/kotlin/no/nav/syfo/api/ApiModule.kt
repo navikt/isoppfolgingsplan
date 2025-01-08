@@ -19,6 +19,8 @@ import no.nav.syfo.api.auth.JwtIssuerType
 import no.nav.syfo.api.auth.installJwtAuthentication
 import no.nav.syfo.api.endpoints.metricEndpoints
 import no.nav.syfo.api.endpoints.podEndpoints
+import no.nav.syfo.api.endpoints.registerOppfolgingsplanEndpoints
+import no.nav.syfo.application.ForesporselService
 import no.nav.syfo.application.exception.ConflictException
 import no.nav.syfo.application.exception.ForbiddenAccessVeilederException
 import no.nav.syfo.infrastructure.NAV_CALL_ID_HEADER
@@ -38,6 +40,7 @@ fun Application.apiModule(
     wellKnownInternalAzureAD: WellKnown,
     database: DatabaseInterface,
     veilederTilgangskontrollClient: VeilederTilgangskontrollClient,
+    foresporselService: ForesporselService,
 ) {
     installMetrics()
     installCallId()
@@ -58,6 +61,10 @@ fun Application.apiModule(
         podEndpoints(applicationState = applicationState, database = database)
         metricEndpoints()
         authenticate(JwtIssuerType.INTERNAL_AZUREAD.name) {
+            registerOppfolgingsplanEndpoints(
+                veilederTilgangskontrollClient = veilederTilgangskontrollClient,
+                foresporselService = foresporselService,
+            )
         }
     }
 }

@@ -10,7 +10,6 @@ import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import java.time.temporal.ChronoUnit
-import java.util.*
 
 class ForesporselRepositoryTest {
     private val externalMockEnvironment = ExternalMockEnvironment.instance
@@ -56,11 +55,7 @@ class ForesporselRepositoryTest {
         @Test
         fun `gets Foresporsler only for given personident`() {
             val foresporsel = generateForsporsel()
-            val otherForesporsel =
-                foresporsel.copy(
-                    uuid = UUID.randomUUID(),
-                    arbeidstakerPersonident = UserConstants.ARBEIDSTAKER_PERSONIDENT_2,
-                )
+            val otherForesporsel = generateForsporsel(UserConstants.ARBEIDSTAKER_PERSONIDENT_2)
             foresporselRepository.createForesporsel(foresporsel)
             foresporselRepository.createForesporsel(otherForesporsel)
 
@@ -74,10 +69,7 @@ class ForesporselRepositoryTest {
         @Test
         fun `gets several Foresporsler for given personident`() {
             val foresporsel = generateForsporsel()
-            val otherForesporsel =
-                foresporsel.copy(
-                    uuid = UUID.randomUUID(),
-                )
+            val otherForesporsel = generateForsporsel()
             foresporselRepository.createForesporsel(foresporsel)
             foresporselRepository.createForesporsel(otherForesporsel)
 
