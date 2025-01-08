@@ -5,6 +5,7 @@ import no.nav.syfo.application.IVarselProducer
 import no.nav.syfo.infrastructure.clients.azuread.AzureAdClient
 import no.nav.syfo.infrastructure.clients.wellknown.WellKnown
 import no.nav.syfo.infrastructure.database.TestDatabase
+import no.nav.syfo.infrastructure.database.repository.ForesporselRepository
 import no.nav.syfo.infrastructure.mock.mockHttpClient
 import java.nio.file.Paths
 
@@ -29,6 +30,7 @@ class ExternalMockEnvironment private constructor() {
             httpClient = mockHttpClient,
         )
     val varselProducer = mockk<IVarselProducer>(relaxed = true)
+    val foresporselRepository = ForesporselRepository(database)
 
     companion object {
         val instance: ExternalMockEnvironment = ExternalMockEnvironment()

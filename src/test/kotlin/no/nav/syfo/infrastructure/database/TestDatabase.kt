@@ -1,8 +1,11 @@
 package no.nav.syfo.infrastructure.database
 
 import io.zonky.test.db.postgres.embedded.EmbeddedPostgres
+import no.nav.syfo.infrastructure.database.repository.PForesporsel
+import no.nav.syfo.infrastructure.database.repository.toPForesporsel
 import org.flywaydb.core.Flyway
 import java.sql.Connection
+import java.util.*
 
 class TestDatabase : DatabaseInterface {
     private val pg: EmbeddedPostgres =
@@ -39,6 +42,21 @@ fun TestDatabase.dropData() {
             connection.prepareStatement(query).execute()
         }
         connection.commit()
+    }
+}
+
+fun TestDatabase.getForesporsel(uuid: UUID): PForesporsel {
+    val query =
+        """
+        SELECT *
+        FROM foresporsel
+        WHERE uuid = ?
+        """
+    return this.connection.use { connection ->
+        connection.prepareStatement(query).use {
+            it.setString(1, uuid.toString())
+            it.executeQuery().toList { toPForesporsel() }.single()
+        }
     }
 }
 
