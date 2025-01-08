@@ -61,11 +61,10 @@ fun Route.registerOppfolgingsplanEndpoints(
                         narmestelederPersonident = Personident(requestDTO.narmestelederPersonident),
                     )
 
-                if (result.isSuccess) {
-                    call.respond(HttpStatusCode.Created, ForesporselResponseDTO.fromForesporsel(result.getOrNull()!!))
-                } else {
-                    call.respond(HttpStatusCode.InternalServerError, result.toString())
-                }
+                result.fold(
+                    onSuccess = { call.respond(HttpStatusCode.Created, ForesporselResponseDTO.fromForesporsel(it)) },
+                    onFailure = { call.respond(HttpStatusCode.InternalServerError, it.toString()) },
+                )
             }
         }
     }
