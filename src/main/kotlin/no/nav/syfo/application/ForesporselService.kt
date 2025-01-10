@@ -4,12 +4,11 @@ import no.nav.syfo.domain.Foresporsel
 import no.nav.syfo.domain.Personident
 import no.nav.syfo.domain.Veilederident
 import no.nav.syfo.domain.Virksomhetsnummer
-import no.nav.syfo.infrastructure.journalforing.JournalforingService
 
 class ForesporselService(
     private val varselProducer: IVarselProducer,
     private val repository: IForesporselRepository,
-    private val journalforingService: JournalforingService,
+    private val journalforingService: IJournalforingService,
 ) {
     fun createForesporsel(
         arbeidstakerPersonident: Personident,

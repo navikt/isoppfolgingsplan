@@ -117,6 +117,7 @@ fun main() {
                     launchCronjobs(
                         applicationState = applicationState,
                         environment = environment,
+                        foresporselService = foresporselService,
                     )
                 }
             },
