@@ -2,6 +2,7 @@ package no.nav.syfo
 
 import no.nav.syfo.infrastructure.clients.ClientEnvironment
 import no.nav.syfo.infrastructure.clients.ClientsEnvironment
+import no.nav.syfo.infrastructure.clients.OpenClientEnvironment
 import no.nav.syfo.infrastructure.clients.azuread.AzureEnvironment
 import no.nav.syfo.infrastructure.database.DatabaseEnvironment
 import no.nav.syfo.infrastructure.kafka.KafkaEnvironment
@@ -41,7 +42,17 @@ data class Environment(
                     baseUrl = getEnvVar("ISTILGANGSKONTROLL_URL"),
                     clientId = getEnvVar("ISTILGANGSKONTROLL_CLIENT_ID"),
                 ),
+            dokarkiv =
+                ClientEnvironment(
+                    baseUrl = getEnvVar("DOKARKIV_URL"),
+                    clientId = getEnvVar("DOKARKIV_CLIENT_ID")
+                ),
+            ereg =
+                OpenClientEnvironment(
+                    baseUrl = getEnvVar("EREG_URL"),
+                ),
         ),
+    val isJournalforingRetryEnabled: Boolean = getEnvVar("JOURNALFORING_RETRY_ENABLED").toBoolean(),
 )
 
 fun getEnvVar(
