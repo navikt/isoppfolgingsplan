@@ -2,7 +2,7 @@ package no.nav.syfo.infrastructure.cronjob
 
 import no.nav.syfo.application.ForesporselService
 
-class JournalforVedtakCronjob(
+class JournalforForesporselCronjob(
     private val foresporselService: ForesporselService,
 ) : Cronjob {
     override val initialDelayMinutes: Long = 3
