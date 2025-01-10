@@ -4,10 +4,12 @@ import no.nav.syfo.domain.Foresporsel
 import no.nav.syfo.domain.Personident
 import no.nav.syfo.domain.Veilederident
 import no.nav.syfo.domain.Virksomhetsnummer
+import no.nav.syfo.infrastructure.journalforing.JournalforingService
 
 class ForesporselService(
     private val varselProducer: IVarselProducer,
     private val repository: IForesporselRepository,
+    private val journalforingService: JournalforingService,
 ) {
     fun createForesporsel(
         arbeidstakerPersonident: Personident,
@@ -33,4 +35,17 @@ class ForesporselService(
     fun getForesporsler(personident: Personident): List<Foresporsel> {
         return repository.getForesporsler(personident)
     }
+
+    suspend fun journalforForesporsler(): List<Result<Foresporsel>> =
+        repository.getForesporslerForJournalforing().map { foresporsel ->
+            journalforingService.journalfor(
+                foresporsel = foresporsel,
+                // TODO: Generate PDF
+                pdf = byteArrayOf(),
+            ).map { journalpostId ->
+                val journalfortForesporsel = foresporsel.journalfor(journalpostId = journalpostId)
+                repository.setJournalpostId(journalfortForesporsel)
+                journalfortForesporsel
+            }
+        }
 }

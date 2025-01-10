@@ -12,6 +12,7 @@ data class Foresporsel private constructor(
     val veilederident: Veilederident,
     val virksomhetsnummer: Virksomhetsnummer,
     val narmestelederPersonident: Personident,
+    val journalpostId: JournalpostId? = null,
 ) {
     constructor(
         arbeidstakerPersonident: Personident,
@@ -27,6 +28,8 @@ data class Foresporsel private constructor(
         narmestelederPersonident = narmestelederPersonident,
     )
 
+    fun journalfor(journalpostId: JournalpostId): Foresporsel = this.copy(journalpostId = journalpostId)
+
     companion object {
         fun createFromDatabase(
             uuid: UUID,
@@ -35,6 +38,7 @@ data class Foresporsel private constructor(
             veilederident: Veilederident,
             virksomhetsnummer: Virksomhetsnummer,
             narmestelederPersonident: Personident,
+            journalpostId: JournalpostId?,
         ) = Foresporsel(
             uuid = uuid,
             createdAt = createdAt,
@@ -42,6 +46,7 @@ data class Foresporsel private constructor(
             veilederident = veilederident,
             virksomhetsnummer = virksomhetsnummer,
             narmestelederPersonident = narmestelederPersonident,
+            journalpostId = journalpostId,
         )
     }
 }

@@ -14,9 +14,11 @@ fun mockHttpClient(environment: Environment) =
                 when {
                     requestUrl == "/${environment.azure.openidConfigTokenEndpoint}" -> azureAdMockResponse()
                     requestUrl.startsWith("/${environment.clients.istilgangskontroll.baseUrl}") ->
-                        tilgangskontrollResponse(
-                            request,
-                        )
+                        tilgangskontrollResponse(request)
+                    requestUrl.startsWith("/${environment.clients.ereg.baseUrl}") ->
+                        eregMockResponse(request)
+                    requestUrl.startsWith("/${environment.clients.dokarkiv.baseUrl}") ->
+                        dokarkivMockResponse(request)
                     else -> error("Unhandled ${request.url.encodedPath}")
                 }
             }

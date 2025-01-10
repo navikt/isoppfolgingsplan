@@ -1,16 +1,19 @@
 package no.nav.syfo.application
 
 import io.mockk.*
+import kotlinx.coroutines.runBlocking
 import no.nav.syfo.ExternalMockEnvironment
 import no.nav.syfo.UserConstants
 import no.nav.syfo.infrastructure.database.dropData
 import no.nav.syfo.infrastructure.database.repository.ForesporselRepository
+import no.nav.syfo.infrastructure.journalforing.JournalforingService
 import no.nav.syfo.infrastructure.kafka.VarselProducer
 import no.nav.syfo.infrastructure.kafka.esyfovarsel.EsyfovarselHendelse
 import no.nav.syfo.infrastructure.kafka.esyfovarsel.EsyfovarselHendelseProducer
 import no.nav.syfo.infrastructure.kafka.esyfovarsel.HendelseType
 import no.nav.syfo.infrastructure.kafka.esyfovarsel.NarmesteLederHendelse
 import no.nav.syfo.shouldBeEqualTo
+import no.nav.syfo.shouldNotBeEqualTo
 import org.apache.kafka.clients.producer.KafkaProducer
 import org.apache.kafka.clients.producer.ProducerRecord
 import org.apache.kafka.clients.producer.RecordMetadata
@@ -20,13 +23,21 @@ import kotlin.test.Test
 import kotlin.test.assertTrue
 
 class ForesporselServiceTest {
-    val database = ExternalMockEnvironment.instance.database
-    private val kafkaProducerMock = mockk<KafkaProducer<String, EsyfovarselHendelse>>()
-    private val varselProducer = VarselProducer(narmesteLederVarselProducer = EsyfovarselHendelseProducer(kafkaProducerMock))
-    private val foresporselService =
+    val externalMockEnvironment = ExternalMockEnvironment.instance
+    val database = externalMockEnvironment.database
+    val kafkaProducerMock = mockk<KafkaProducer<String, EsyfovarselHendelse>>()
+    val varselProducer = VarselProducer(narmesteLederVarselProducer = EsyfovarselHendelseProducer(kafkaProducerMock))
+    val journalforingService =
+        JournalforingService(
+            dokarkivClient = externalMockEnvironment.dokarkivClient,
+            eregClient = externalMockEnvironment.eregClient,
+            isJournalforingRetryEnabled = externalMockEnvironment.environment.isJournalforingRetryEnabled,
+        )
+    val foresporselService =
         ForesporselService(
             varselProducer = varselProducer,
-            repository = ForesporselRepository(database)
+            repository = ForesporselRepository(database),
+            journalforingService = journalforingService,
         )
 
     @BeforeEach
@@ -72,6 +83,27 @@ class ForesporselServiceTest {
         stored.size shouldBeEqualTo 1
         val storedForesporsel = stored[0]
         storedForesporsel.uuid shouldBeEqualTo result.getOrNull()?.uuid
+        storedForesporsel.journalpostId shouldBeEqualTo null
+    }
+
+    @Test
+    fun `journalforing`() {
+        val result =
+            foresporselService.createForesporsel(
+                arbeidstakerPersonident = UserConstants.ARBEIDSTAKER_PERSONIDENT,
+                veilederident = UserConstants.VEILEDER_IDENT,
+                virksomhetsnummer = UserConstants.VIRKSOMHETSNUMMER,
+                narmestelederPersonident = UserConstants.NARMESTELEDER_FNR,
+            )
+        assertTrue(result.isSuccess)
+        runBlocking {
+            foresporselService.journalforForesporsler()
+        }
+        val stored = foresporselService.getForesporsler(UserConstants.ARBEIDSTAKER_PERSONIDENT)
+        stored.size shouldBeEqualTo 1
+        val storedForesporsel = stored[0]
+        storedForesporsel.uuid shouldBeEqualTo result.getOrNull()?.uuid
+        storedForesporsel.journalpostId shouldNotBeEqualTo null
     }
 
     @Test

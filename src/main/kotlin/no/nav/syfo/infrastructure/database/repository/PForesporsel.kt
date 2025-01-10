@@ -1,9 +1,6 @@
 package no.nav.syfo.infrastructure.database.repository
 
-import no.nav.syfo.domain.Foresporsel
-import no.nav.syfo.domain.Personident
-import no.nav.syfo.domain.Veilederident
-import no.nav.syfo.domain.Virksomhetsnummer
+import no.nav.syfo.domain.*
 import java.time.OffsetDateTime
 import java.util.*
 
@@ -16,6 +13,7 @@ data class PForesporsel(
     val narmestelederPersonident: Personident,
     val virksomhetsnummer: Virksomhetsnummer,
     val publishedAt: OffsetDateTime?,
+    val journalpostId: JournalpostId?,
 ) {
     fun toForesporsel() =
         Foresporsel.createFromDatabase(
@@ -25,5 +23,6 @@ data class PForesporsel(
             veilederident = veilederident,
             narmestelederPersonident = narmestelederPersonident,
             virksomhetsnummer = virksomhetsnummer,
+            journalpostId = journalpostId,
         )
 }

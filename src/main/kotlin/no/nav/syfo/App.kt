@@ -8,12 +8,15 @@ import io.ktor.server.netty.*
 import no.nav.syfo.api.apiModule
 import no.nav.syfo.application.ForesporselService
 import no.nav.syfo.infrastructure.clients.azuread.AzureAdClient
+import no.nav.syfo.infrastructure.clients.dokarkiv.DokarkivClient
+import no.nav.syfo.infrastructure.clients.ereg.EregClient
 import no.nav.syfo.infrastructure.clients.veiledertilgang.VeilederTilgangskontrollClient
 import no.nav.syfo.infrastructure.clients.wellknown.getWellKnown
 import no.nav.syfo.infrastructure.cronjob.launchCronjobs
 import no.nav.syfo.infrastructure.database.applicationDatabase
 import no.nav.syfo.infrastructure.database.databaseModule
 import no.nav.syfo.infrastructure.database.repository.ForesporselRepository
+import no.nav.syfo.infrastructure.journalforing.JournalforingService
 import no.nav.syfo.infrastructure.kafka.VarselProducer
 import no.nav.syfo.infrastructure.kafka.esyfovarsel.EsyfovarselHendelse
 import no.nav.syfo.infrastructure.kafka.esyfovarsel.EsyfovarselHendelseProducer
@@ -55,6 +58,21 @@ fun main() {
         VarselProducer(
             narmesteLederVarselProducer = narmesteLederVarselProducer,
         )
+    val dokarkivClient =
+        DokarkivClient(
+            azureAdClient = azureAdClient,
+            dokarkivEnvironment = environment.clients.dokarkiv,
+        )
+    val eregClient =
+        EregClient(
+            baseUrl = environment.clients.ereg.baseUrl,
+        )
+    val journalforingService =
+        JournalforingService(
+            dokarkivClient = dokarkivClient,
+            eregClient = eregClient,
+            isJournalforingRetryEnabled = environment.isJournalforingRetryEnabled,
+        )
     val applicationEngineEnvironment =
         applicationEnvironment {
             log = logger
@@ -82,6 +100,7 @@ fun main() {
                     ForesporselService(
                         varselProducer = varselProducer,
                         repository = foresporselRepository,
+                        journalforingService = journalforingService,
                     )
 
                 apiModule(

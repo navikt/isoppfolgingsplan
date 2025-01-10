@@ -9,5 +9,9 @@ interface IForesporselRepository {
 
     fun getForesporsler(personident: Personident): List<Foresporsel>
 
+    fun getForesporslerForJournalforing(): List<Foresporsel>
+
+    fun setJournalpostId(journalfortForesporsel: Foresporsel)
+
     fun setPublishedAt(foresporselUuid: UUID)
 }
