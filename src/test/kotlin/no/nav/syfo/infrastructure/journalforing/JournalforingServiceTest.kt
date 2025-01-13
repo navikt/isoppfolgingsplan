@@ -59,6 +59,7 @@ class JournalforingServiceTest {
                         mottakerVirksomhetsnummer = UserConstants.VIRKSOMHETSNUMMER,
                         mottakerNavn = UserConstants.VIRKSOMHETSNAVN,
                         brukerPersonident = UserConstants.ARBEIDSTAKER_PERSONIDENT,
+                        overstyrInnsynsregler = OverstyrInnsynsregler.VISES_MASKINELT_GODKJENT,
                     )
             )
         }
