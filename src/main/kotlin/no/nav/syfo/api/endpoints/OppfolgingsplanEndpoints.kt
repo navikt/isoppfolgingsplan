@@ -13,6 +13,7 @@ import no.nav.syfo.domain.Virksomhetsnummer
 import no.nav.syfo.infrastructure.NAV_PERSONIDENT_HEADER
 import no.nav.syfo.infrastructure.clients.veiledertilgang.VeilederTilgangskontrollClient
 import no.nav.syfo.infrastructure.clients.veiledertilgang.validateVeilederAccess
+import no.nav.syfo.util.getNavIdent
 import no.nav.syfo.util.getPersonident
 
 fun Route.registerOppfolgingsplanEndpoints(
@@ -56,7 +57,7 @@ fun Route.registerOppfolgingsplanEndpoints(
                 val result =
                     foresporselService.createForesporsel(
                         arbeidstakerPersonident = Personident(requestDTO.arbeidstakerPersonident),
-                        veilederident = Veilederident(requestDTO.veilederident),
+                        veilederident = Veilederident(call.getNavIdent()),
                         virksomhetsnummer = Virksomhetsnummer(requestDTO.virksomhetsnummer),
                         narmestelederPersonident = Personident(requestDTO.narmestelederPersonident),
                     )

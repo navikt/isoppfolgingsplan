@@ -113,7 +113,6 @@ object OppfolgingsplanEndpointsTest {
             assertEquals(stored.size, 1)
             val storedForesporsel = stored[0]
             assertEquals(storedForesporsel.arbeidstakerPersonident, foresporselRequestDTO.arbeidstakerPersonident)
-            assertEquals(storedForesporsel.veilederident, foresporselRequestDTO.veilederident)
             assertEquals(storedForesporsel.narmestelederPersonident, foresporselRequestDTO.narmestelederPersonident)
             assertEquals(storedForesporsel.virksomhetsnummer, foresporselRequestDTO.virksomhetsnummer)
         }
@@ -146,7 +145,6 @@ object OppfolgingsplanEndpointsTest {
     private fun createForesporselRequestDTO(arbeidstakerPersonident: Personident = ARBEIDSTAKER_PERSONIDENT) =
         ForesporselRequestDTO(
             arbeidstakerPersonident = arbeidstakerPersonident.value,
-            veilederident = VEILEDER_IDENT.value,
             virksomhetsnummer = VIRKSOMHETSNUMMER.value,
             narmestelederPersonident = NARMESTELEDER_FNR.value,
         )
