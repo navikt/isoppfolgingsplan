@@ -10,14 +10,9 @@ data class EregOrganisasjonResponse(
 )
 
 fun EregOrganisasjonResponse.toEregVirksomhetsnavn(): EregVirksomhetsnavn =
-    this.navn.let { (navnelinje1, redigertnavn) ->
-        if (redigertnavn.isNullOrBlank()) {
-            EregVirksomhetsnavn(
-                virksomhetsnavn = navnelinje1
-            )
-        } else {
-            EregVirksomhetsnavn(
-                virksomhetsnavn = redigertnavn
-            )
-        }
-    }
+    EregVirksomhetsnavn(
+        virksomhetsnavn =
+            this.navn.let { (navnelinje1, redigertnavn) ->
+                if (redigertnavn.isNullOrBlank()) navnelinje1 else redigertnavn
+            }
+    )
