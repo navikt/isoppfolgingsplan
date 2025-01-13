@@ -44,6 +44,8 @@ spec:
     outbound:
       external:
         - host: "login.microsoftonline.com"
+        - host: "ereg-services.prod-fss-pub.nais.io"
+        - host: "dokarkiv.prod-fss-pub.nais.io"
       rules:
         - application: istilgangskontroll
   gcp:
@@ -69,6 +71,14 @@ spec:
   env:
     - name: KTOR_ENV
       value: "production"
+    - name: JOURNALFORING_RETRY_ENABLED
+      value: "true"
+    - name: DOKARKIV_CLIENT_ID
+      value: "prod-fss.teamdokumenthandtering.dokarkiv"
+    - name: DOKARKIV_URL
+      value: "https://dokarkiv.prod-fss-pub.nais.io"
+    - name: EREG_URL
+      value: "https://ereg-services.prod-fss-pub.nais.io"
     - name: ISTILGANGSKONTROLL_CLIENT_ID
       value: "prod-gcp.teamsykefravr.istilgangskontroll"
     - name: ISTILGANGSKONTROLL_URL
