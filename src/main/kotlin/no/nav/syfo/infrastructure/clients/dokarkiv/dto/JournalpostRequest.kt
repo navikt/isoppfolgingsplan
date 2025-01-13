@@ -1,6 +1,6 @@
 package no.nav.syfo.infrastructure.clients.dokarkiv.dto
 
-const val JOURNALFORENDE_ENHET = 9999
+const val JOURNALFORENDE_ENHET_MASKINELT = 9999
 
 enum class JournalpostType {
     UTGAAENDE,
@@ -24,7 +24,7 @@ data class JournalpostRequest(
     val tittel: String,
     val bruker: Bruker? = null,
     val dokumenter: List<Dokument>,
-    val journalfoerendeEnhet: Int? = JOURNALFORENDE_ENHET,
+    val journalfoerendeEnhet: Int? = JOURNALFORENDE_ENHET_MASKINELT,
     val journalpostType: String = JournalpostType.UTGAAENDE.name,
     val tema: String = JournalpostTema.OPPFOLGING.value,
     val kanal: String? = null,
