@@ -79,6 +79,7 @@ class JournalforingService(
             tittel = "Forespørsel til arbeidsgiver om oppfølgingsplan",
             bruker = bruker,
             dokumenter = dokumenter,
+            overstyrInnsynsregler = OverstyrInnsynsregler.VISES_MASKINELT_GODKJENT.name,
             eksternReferanseId = foresporsel.uuid.toString(),
         )
     }

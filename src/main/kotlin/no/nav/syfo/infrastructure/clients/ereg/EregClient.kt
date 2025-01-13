@@ -46,10 +46,10 @@ class EregClient(
 
     private fun ResponseException.isOrganisasjonNotFound(virksomhetsnummer: Virksomhetsnummer): Boolean {
         val is404 = this.response.status == HttpStatusCode.NotFound
-        val messageNoVirksomhetsnavn =
+        val messageVirksomhetsNotFound =
             "Ingen organisasjon med organisasjonsnummer ${virksomhetsnummer.value} ble funnet"
-        val isMessageNoVirksomhetsnavn = this.message?.contains(messageNoVirksomhetsnavn) ?: false
-        return is404 && isMessageNoVirksomhetsnavn
+        val isMessageVirksomhetNotFound = this.message?.contains(messageVirksomhetsNotFound) ?: false
+        return is404 && isMessageVirksomhetNotFound
     }
 
     companion object {
