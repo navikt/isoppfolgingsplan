@@ -1,10 +1,7 @@
 package no.nav.syfo.infrastructure.database.repository
 
 import no.nav.syfo.application.IForesporselRepository
-import no.nav.syfo.domain.Foresporsel
-import no.nav.syfo.domain.Personident
-import no.nav.syfo.domain.Veilederident
-import no.nav.syfo.domain.Virksomhetsnummer
+import no.nav.syfo.domain.*
 import no.nav.syfo.infrastructure.database.DatabaseInterface
 import no.nav.syfo.infrastructure.database.toList
 import no.nav.syfo.util.nowUTC
@@ -55,6 +52,29 @@ class ForesporselRepository(val database: DatabaseInterface) : IForesporselRepos
         }
     }
 
+    override fun getForesporslerForJournalforing(): List<Foresporsel> {
+        return database.connection.use { connection ->
+            connection.prepareStatement(GET_FORESPORSEL_JOURNALFORING).use {
+                it.executeQuery()
+                    .toList { toPForesporsel().toForesporsel() }
+            }
+        }
+    }
+
+    override fun setJournalpostId(journalfortForesporsel: Foresporsel) {
+        return database.connection.use { connection ->
+            connection.prepareStatement(SET_FORESPORSEL_JOURNALFORING).use {
+                it.setString(1, journalfortForesporsel.journalpostId?.value)
+                it.setString(2, journalfortForesporsel.uuid.toString())
+                val updated = it.executeUpdate()
+                if (updated != 1) {
+                    throw SQLException("Expected a single row to be updated, got update count $updated")
+                }
+            }
+            connection.commit()
+        }
+    }
+
     companion object {
         private const val CREATE_FORESPORSEL =
             """
@@ -83,6 +103,19 @@ class ForesporselRepository(val database: DatabaseInterface) : IForesporselRepos
                 SET published_at = ?
                 WHERE uuid = ?
             """
+
+        private const val GET_FORESPORSEL_JOURNALFORING =
+            """
+                SELECT *
+                FROM foresporsel
+                WHERE journalpost_id IS NULL
+                ORDER BY ID ASC
+            """
+
+        private const val SET_FORESPORSEL_JOURNALFORING =
+            """
+                UPDATE foresporsel SET journalpost_id=? WHERE uuid=?
+            """
     }
 }
 
@@ -96,4 +129,5 @@ internal fun ResultSet.toPForesporsel(): PForesporsel =
         narmestelederPersonident = Personident(getString("narmesteleder_personident")),
         virksomhetsnummer = Virksomhetsnummer(getString("virksomhetsnummer")),
         publishedAt = getObject("published_at", OffsetDateTime::class.java),
+        journalpostId = getString("journalpost_id")?.let { JournalpostId(it) },
     )
