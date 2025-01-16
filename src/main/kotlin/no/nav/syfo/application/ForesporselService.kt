@@ -4,13 +4,14 @@ import no.nav.syfo.domain.Foresporsel
 import no.nav.syfo.domain.Personident
 import no.nav.syfo.domain.Veilederident
 import no.nav.syfo.domain.Virksomhetsnummer
+import org.slf4j.LoggerFactory
 
 class ForesporselService(
     private val varselProducer: IVarselProducer,
     private val repository: IForesporselRepository,
     private val journalforingService: IJournalforingService,
 ) {
-    fun createForesporsel(
+    suspend fun createForesporsel(
         arbeidstakerPersonident: Personident,
         veilederident: Veilederident,
         virksomhetsnummer: Virksomhetsnummer,
@@ -25,6 +26,12 @@ class ForesporselService(
             )
 
         val storedForesporsel = repository.createForesporsel(foresporsel)
+
+        try {
+            journalforForesporsel(storedForesporsel)
+        } catch (exc: Exception) {
+            log.warn("Journalforing failed, cronjob will try again", exc)
+        }
         return varselProducer.sendNarmesteLederVarsel(
             foresporsel = storedForesporsel,
         )
@@ -37,14 +44,21 @@ class ForesporselService(
 
     suspend fun journalforForesporsler(): List<Result<Foresporsel>> =
         repository.getForesporslerForJournalforing().map { foresporsel ->
-            journalforingService.journalfor(
-                foresporsel = foresporsel,
-                // TODO: Generate PDF
-                pdf = byteArrayOf(),
-            ).map { journalpostId ->
-                val journalfortForesporsel = foresporsel.journalfor(journalpostId = journalpostId)
-                repository.setJournalpostId(journalfortForesporsel)
-                journalfortForesporsel
-            }
+            journalforForesporsel(foresporsel)
         }
+
+    private suspend fun journalforForesporsel(foresporsel: Foresporsel): Result<Foresporsel> =
+        journalforingService.journalfor(
+            foresporsel = foresporsel,
+            // TODO: Generate PDF
+            pdf = byteArrayOf(),
+        ).map { journalpostId ->
+            val journalfortForesporsel = foresporsel.journalfor(journalpostId = journalpostId)
+            repository.setJournalpostId(journalfortForesporsel)
+            journalfortForesporsel
+        }
+
+    companion object {
+        private val log = LoggerFactory.getLogger(ForesporselService::class.java)
+    }
 }
