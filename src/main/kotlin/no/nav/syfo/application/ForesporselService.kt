@@ -27,10 +27,8 @@ class ForesporselService(
 
         val storedForesporsel = repository.createForesporsel(foresporsel)
 
-        try {
-            journalforForesporsel(storedForesporsel)
-        } catch (exc: Exception) {
-            log.warn("Journalforing failed, cronjob will try again", exc)
+        journalforForesporsel(storedForesporsel).onFailure {
+            log.warn("Journalforing failed, cronjob will try again", it.cause)
         }
         return varselProducer.sendNarmesteLederVarsel(
             foresporsel = storedForesporsel,
