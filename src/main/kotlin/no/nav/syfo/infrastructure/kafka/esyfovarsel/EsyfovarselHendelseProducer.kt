@@ -16,9 +16,7 @@ class EsyfovarselHendelseProducer(
                     ESYFOVARSEL_TOPIC,
                     UUID.randomUUID().toString(),
                     NarmesteLederHendelse(
-                        // TODO: Correct varsel type
                         type = HendelseType.NL_OPPFOLGINGSPLAN_FORESPORSEL,
-                        // TODO: Avklar med esyfo hva som trengs her
                         data = null,
                         narmesteLederFnr = foresporsel.narmestelederPersonident.value,
                         arbeidstakerFnr = foresporsel.arbeidstakerPersonident.value,

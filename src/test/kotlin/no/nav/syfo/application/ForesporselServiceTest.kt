@@ -4,6 +4,7 @@ import io.mockk.*
 import kotlinx.coroutines.runBlocking
 import no.nav.syfo.ExternalMockEnvironment
 import no.nav.syfo.UserConstants
+import no.nav.syfo.generator.generateForsporsel
 import no.nav.syfo.infrastructure.database.dropData
 import no.nav.syfo.infrastructure.database.repository.ForesporselRepository
 import no.nav.syfo.infrastructure.journalforing.JournalforingService
@@ -23,20 +24,22 @@ import kotlin.test.Test
 import kotlin.test.assertTrue
 
 class ForesporselServiceTest {
-    val externalMockEnvironment = ExternalMockEnvironment.instance
-    val database = externalMockEnvironment.database
-    val kafkaProducerMock = mockk<KafkaProducer<String, EsyfovarselHendelse>>()
-    val varselProducer = VarselProducer(narmesteLederVarselProducer = EsyfovarselHendelseProducer(kafkaProducerMock))
-    val journalforingService =
+    private val externalMockEnvironment = ExternalMockEnvironment.instance
+    private val database = externalMockEnvironment.database
+    private val kafkaProducerMock = mockk<KafkaProducer<String, EsyfovarselHendelse>>()
+    private val varselProducer =
+        VarselProducer(narmesteLederVarselProducer = EsyfovarselHendelseProducer(kafkaProducerMock))
+    private val journalforingService =
         JournalforingService(
             dokarkivClient = externalMockEnvironment.dokarkivClient,
             eregClient = externalMockEnvironment.eregClient,
             isJournalforingRetryEnabled = externalMockEnvironment.environment.isJournalforingRetryEnabled,
         )
-    val foresporselService =
+    private val foresporselRepository = ForesporselRepository(database)
+    private val foresporselService =
         ForesporselService(
             varselProducer = varselProducer,
-            repository = ForesporselRepository(database),
+            repository = foresporselRepository,
             journalforingService = journalforingService,
         )
 
@@ -48,8 +51,8 @@ class ForesporselServiceTest {
     }
 
     @Test
-    fun `store and send to narmeste leder produces to kafka`() {
-        val result =
+    fun `createForesporsel stores`() {
+        val foresporsel =
             foresporselService.createForesporsel(
                 arbeidstakerPersonident = UserConstants.ARBEIDSTAKER_PERSONIDENT,
                 veilederident = UserConstants.VEILEDER_IDENT,
@@ -57,7 +60,35 @@ class ForesporselServiceTest {
                 narmestelederPersonident = UserConstants.NARMESTELEDER_FNR,
             )
 
-        assertTrue(result.isSuccess)
+        val stored = foresporselService.getForesporsler(UserConstants.ARBEIDSTAKER_PERSONIDENT)
+        stored.size shouldBeEqualTo 1
+        val storedForesporsel = stored[0]
+        storedForesporsel.uuid shouldBeEqualTo foresporsel.uuid
+        storedForesporsel.journalpostId shouldBeEqualTo null
+    }
+
+    @Test
+    fun journalforing() {
+        val foresporsel = foresporselRepository.createForesporsel(generateForsporsel())
+
+        runBlocking {
+            foresporselService.journalforForesporsler()
+        }
+
+        val stored = foresporselService.getForesporsler(UserConstants.ARBEIDSTAKER_PERSONIDENT)
+        stored.size shouldBeEqualTo 1
+        val storedForesporsel = stored[0]
+        storedForesporsel.uuid shouldBeEqualTo foresporsel.uuid
+        storedForesporsel.journalpostId shouldNotBeEqualTo null
+    }
+
+    @Test
+    fun `sends unpublished foresporsel to narmeste leder`() {
+        foresporselRepository.createForesporsel(generateForsporsel())
+
+        val results = foresporselService.publishedNarmestelederVarsler()
+        results.size shouldBeEqualTo 1
+        assertTrue(results.any { it.isSuccess })
 
         val producerRecordSlot = slot<ProducerRecord<String, EsyfovarselHendelse>>()
         verify(exactly = 1) { kafkaProducerMock.send(capture(producerRecordSlot)) }
@@ -67,57 +98,26 @@ class ForesporselServiceTest {
         esyfovarselHendelse.orgnummer shouldBeEqualTo UserConstants.VIRKSOMHETSNUMMER.value
         esyfovarselHendelse.narmesteLederFnr shouldBeEqualTo UserConstants.NARMESTELEDER_FNR.value
         esyfovarselHendelse.type shouldBeEqualTo HendelseType.NL_OPPFOLGINGSPLAN_FORESPORSEL
+
+        assertTrue(foresporselService.publishedNarmestelederVarsler().isEmpty())
     }
 
     @Test
-    fun `store and send to narmeste leder stores`() {
-        val result =
-            foresporselService.createForesporsel(
-                arbeidstakerPersonident = UserConstants.ARBEIDSTAKER_PERSONIDENT,
-                veilederident = UserConstants.VEILEDER_IDENT,
-                virksomhetsnummer = UserConstants.VIRKSOMHETSNUMMER,
-                narmestelederPersonident = UserConstants.NARMESTELEDER_FNR,
-            )
-        assertTrue(result.isSuccess)
-        val stored = foresporselService.getForesporsler(UserConstants.ARBEIDSTAKER_PERSONIDENT)
-        stored.size shouldBeEqualTo 1
-        val storedForesporsel = stored[0]
-        storedForesporsel.uuid shouldBeEqualTo result.getOrNull()?.uuid
-        storedForesporsel.journalpostId shouldBeEqualTo null
-    }
+    fun `does not send published foresporsel to narmeste leder`() {
+        val foresporsel = foresporselRepository.createForesporsel(generateForsporsel())
+        foresporselRepository.setPublishedAt(foresporsel.uuid)
 
-    @Test
-    fun `journalforing`() {
-        val result =
-            foresporselService.createForesporsel(
-                arbeidstakerPersonident = UserConstants.ARBEIDSTAKER_PERSONIDENT,
-                veilederident = UserConstants.VEILEDER_IDENT,
-                virksomhetsnummer = UserConstants.VIRKSOMHETSNUMMER,
-                narmestelederPersonident = UserConstants.NARMESTELEDER_FNR,
-            )
-        assertTrue(result.isSuccess)
-        runBlocking {
-            foresporselService.journalforForesporsler()
-        }
-        val stored = foresporselService.getForesporsler(UserConstants.ARBEIDSTAKER_PERSONIDENT)
-        stored.size shouldBeEqualTo 1
-        val storedForesporsel = stored[0]
-        storedForesporsel.uuid shouldBeEqualTo result.getOrNull()?.uuid
-        storedForesporsel.journalpostId shouldNotBeEqualTo null
+        val results = foresporselService.publishedNarmestelederVarsler()
+        assertTrue(results.isEmpty())
     }
 
     @Test
     fun `send to narmeste leder fails when kafka producer fails`() {
         coEvery { kafkaProducerMock.send(any()) } throws Exception("Kafka error")
+        foresporselRepository.createForesporsel(generateForsporsel())
 
-        val result =
-            foresporselService.createForesporsel(
-                arbeidstakerPersonident = UserConstants.ARBEIDSTAKER_PERSONIDENT,
-                veilederident = UserConstants.VEILEDER_IDENT,
-                virksomhetsnummer = UserConstants.VIRKSOMHETSNUMMER,
-                narmestelederPersonident = UserConstants.NARMESTELEDER_FNR,
-            )
-
-        assertTrue(result.isFailure)
+        val results = foresporselService.publishedNarmestelederVarsler()
+        results.size shouldBeEqualTo 1
+        assertTrue(results.any { it.isFailure })
     }
 }

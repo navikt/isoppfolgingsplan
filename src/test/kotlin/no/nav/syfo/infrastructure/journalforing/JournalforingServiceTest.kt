@@ -20,9 +20,9 @@ import org.junit.jupiter.api.Test
 import java.util.*
 
 class JournalforingServiceTest {
-    val externalMockEnvironment = ExternalMockEnvironment.instance
-    val dokarkivMock = mockk<DokarkivClient>(relaxed = true)
-    val journalforingService =
+    private val externalMockEnvironment = ExternalMockEnvironment.instance
+    private val dokarkivMock = mockk<DokarkivClient>(relaxed = true)
+    private val journalforingService =
         JournalforingService(
             dokarkivClient = dokarkivMock,
             eregClient = externalMockEnvironment.eregClient,

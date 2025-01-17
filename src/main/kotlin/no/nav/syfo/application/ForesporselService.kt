@@ -15,7 +15,7 @@ class ForesporselService(
         veilederident: Veilederident,
         virksomhetsnummer: Virksomhetsnummer,
         narmestelederPersonident: Personident,
-    ): Result<Foresporsel> {
+    ): Foresporsel {
         val foresporsel =
             Foresporsel(
                 arbeidstakerPersonident = arbeidstakerPersonident,
@@ -25,10 +25,8 @@ class ForesporselService(
             )
 
         val storedForesporsel = repository.createForesporsel(foresporsel)
-        return varselProducer.sendNarmesteLederVarsel(
-            foresporsel = storedForesporsel,
-        )
-        // TODO: Set published in db
+
+        return storedForesporsel
     }
 
     fun getForesporsler(personident: Personident): List<Foresporsel> {
@@ -47,4 +45,15 @@ class ForesporselService(
                 journalfortForesporsel
             }
         }
+
+    fun publishedNarmestelederVarsler(): List<Result<Foresporsel>> {
+        val unpublishedForesporsler = repository.getUnpublishedForesporsler()
+
+        return unpublishedForesporsler.map { foresporsel ->
+            varselProducer.sendNarmesteLederVarsel(foresporsel).map {
+                repository.setPublishedAt(it.uuid)
+                it
+            }
+        }
+    }
 }

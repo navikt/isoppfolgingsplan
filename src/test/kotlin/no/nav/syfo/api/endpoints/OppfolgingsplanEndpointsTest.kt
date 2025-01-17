@@ -8,7 +8,6 @@ import io.ktor.http.*
 import io.ktor.serialization.jackson.*
 import io.ktor.server.testing.*
 import io.mockk.clearMocks
-import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.slot
 import no.nav.syfo.ExternalMockEnvironment
@@ -30,10 +29,10 @@ import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
 object OppfolgingsplanEndpointsTest {
-    val urlOppfolgingsplan = "/api/internad/v1/oppfolgingsplan"
-    val externalMockEnvironment = ExternalMockEnvironment.instance
-    val database = externalMockEnvironment.database
-    val varselProducer = externalMockEnvironment.varselProducer
+    private const val URL_OPPFOLGINGSPLAN = "/api/internad/v1/oppfolgingsplan"
+    private val externalMockEnvironment = ExternalMockEnvironment.instance
+    private val database = externalMockEnvironment.database
+    private val varselProducer = externalMockEnvironment.varselProducer
 
     fun ApplicationTestBuilder.setupApiAndClient(): HttpClient {
         application {
@@ -50,15 +49,12 @@ object OppfolgingsplanEndpointsTest {
         return client
     }
 
-    val validToken =
+    private val validToken =
         generateJWT(
             audience = externalMockEnvironment.environment.azure.appClientId,
             issuer = externalMockEnvironment.wellKnownInternalAzureAD.issuer,
             navIdent = VEILEDER_IDENT.value,
         )
-
-    val personIdent = ARBEIDSTAKER_PERSONIDENT.value
-    val personIdentNoAccess = ARBEIDSTAKER_PERSONIDENT_VEILEDER_NO_ACCESS.value
 
     @BeforeEach
     fun beforeEachTest() {
@@ -71,32 +67,13 @@ object OppfolgingsplanEndpointsTest {
     }
 
     @Test
-    fun `Successfully creates a new foresporsel with varsel`() {
-        testApplication {
-            val client = setupApiAndClient()
-
-            val foresporselRequestDTO = createForesporselRequestDTO()
-            val response =
-                client.post("$urlOppfolgingsplan/foresporsler") {
-                    contentType(ContentType.Application.Json)
-                    bearerAuth(validToken)
-                    setBody(foresporselRequestDTO)
-                }
-            assertEquals(HttpStatusCode.Created, response.status)
-            coVerify(exactly = 1) {
-                varselProducer.sendNarmesteLederVarsel(any())
-            }
-        }
-    }
-
-    @Test
     fun `Successfully stores and gets foresporsel`() {
         testApplication {
             val client = setupApiAndClient()
 
             val foresporselRequestDTO = createForesporselRequestDTO()
             val responseCreate =
-                client.post("$urlOppfolgingsplan/foresporsler") {
+                client.post("$URL_OPPFOLGINGSPLAN/foresporsler") {
                     contentType(ContentType.Application.Json)
                     bearerAuth(validToken)
                     setBody(foresporselRequestDTO)
@@ -104,7 +81,7 @@ object OppfolgingsplanEndpointsTest {
             assertEquals(HttpStatusCode.Created, responseCreate.status)
 
             val response =
-                client.get("$urlOppfolgingsplan/foresporsler") {
+                client.get("$URL_OPPFOLGINGSPLAN/foresporsler") {
                     bearerAuth(validToken)
                     header(NAV_PERSONIDENT_HEADER, ARBEIDSTAKER_PERSONIDENT.value)
                 }
@@ -122,7 +99,7 @@ object OppfolgingsplanEndpointsTest {
     fun `Returns status Unauthorized if no token is supplied`() {
         testApplication {
             val client = setupApiAndClient()
-            val response = client.post("$urlOppfolgingsplan/foresporsler")
+            val response = client.post("$URL_OPPFOLGINGSPLAN/foresporsler")
             assertEquals(HttpStatusCode.Unauthorized, response.status)
         }
     }
@@ -133,7 +110,7 @@ object OppfolgingsplanEndpointsTest {
             val client = setupApiAndClient()
             val foresporselRequestDTO = createForesporselRequestDTO(ARBEIDSTAKER_PERSONIDENT_VEILEDER_NO_ACCESS)
             val response =
-                client.post("$urlOppfolgingsplan/foresporsler") {
+                client.post("$URL_OPPFOLGINGSPLAN/foresporsler") {
                     contentType(ContentType.Application.Json)
                     bearerAuth(validToken)
                     setBody(foresporselRequestDTO)
