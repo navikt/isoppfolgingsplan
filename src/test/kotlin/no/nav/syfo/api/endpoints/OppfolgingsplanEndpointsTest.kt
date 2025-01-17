@@ -21,6 +21,7 @@ import no.nav.syfo.api.model.*
 import no.nav.syfo.api.testApiModule
 import no.nav.syfo.domain.Foresporsel
 import no.nav.syfo.domain.Personident
+import no.nav.syfo.generator.generateDocumentComponent
 import no.nav.syfo.infrastructure.NAV_PERSONIDENT_HEADER
 import no.nav.syfo.infrastructure.database.dropData
 import no.nav.syfo.util.configure
@@ -124,5 +125,6 @@ object OppfolgingsplanEndpointsTest {
             arbeidstakerPersonident = arbeidstakerPersonident.value,
             virksomhetsnummer = VIRKSOMHETSNUMMER.value,
             narmestelederPersonident = NARMESTELEDER_FNR.value,
+            document = generateDocumentComponent(),
         )
 }

@@ -60,6 +60,7 @@ fun Route.registerOppfolgingsplanEndpoints(
                         veilederident = Veilederident(call.getNavIdent()),
                         virksomhetsnummer = Virksomhetsnummer(requestDTO.virksomhetsnummer),
                         narmestelederPersonident = Personident(requestDTO.narmestelederPersonident),
+                        document = requestDTO.document,
                     )
                 call.respond(HttpStatusCode.Created, ForesporselResponseDTO.fromForesporsel(result))
             }

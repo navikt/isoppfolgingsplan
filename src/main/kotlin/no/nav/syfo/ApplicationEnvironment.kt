@@ -51,6 +51,10 @@ data class Environment(
                 OpenClientEnvironment(
                     baseUrl = getEnvVar("EREG_URL"),
                 ),
+            ispdfgen =
+                OpenClientEnvironment(
+                    baseUrl = "http://ispdfgen"
+                ),
         ),
     val isJournalforingRetryEnabled: Boolean = getEnvVar("JOURNALFORING_RETRY_ENABLED").toBoolean(),
     val narmestelederVarselEnabled: Boolean = getEnvVar("NARMESTELEDER_VARSEL_ENABLED", "false").toBoolean(),

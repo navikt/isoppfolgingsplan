@@ -10,6 +10,7 @@ import no.nav.syfo.application.ForesporselService
 import no.nav.syfo.infrastructure.clients.azuread.AzureAdClient
 import no.nav.syfo.infrastructure.clients.dokarkiv.DokarkivClient
 import no.nav.syfo.infrastructure.clients.ereg.EregClient
+import no.nav.syfo.infrastructure.clients.pdfgen.PdfGenClient
 import no.nav.syfo.infrastructure.clients.veiledertilgang.VeilederTilgangskontrollClient
 import no.nav.syfo.infrastructure.clients.wellknown.getWellKnown
 import no.nav.syfo.infrastructure.cronjob.launchCronjobs
@@ -63,6 +64,10 @@ fun main() {
             azureAdClient = azureAdClient,
             dokarkivEnvironment = environment.clients.dokarkiv,
         )
+    val pdfClient =
+        PdfGenClient(
+            pdfGenBaseUrl = environment.clients.ispdfgen.baseUrl,
+        )
     val eregClient =
         EregClient(
             baseUrl = environment.clients.ereg.baseUrl,
@@ -71,6 +76,7 @@ fun main() {
         JournalforingService(
             dokarkivClient = dokarkivClient,
             eregClient = eregClient,
+            pdfClient = pdfClient,
             isJournalforingRetryEnabled = environment.isJournalforingRetryEnabled,
         )
     val applicationEngineEnvironment =

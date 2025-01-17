@@ -4,6 +4,7 @@ import no.nav.syfo.domain.Foresporsel
 import no.nav.syfo.domain.Personident
 import no.nav.syfo.domain.Veilederident
 import no.nav.syfo.domain.Virksomhetsnummer
+import no.nav.syfo.domain.DocumentComponent
 
 class ForesporselService(
     private val varselProducer: IVarselProducer,
@@ -15,6 +16,7 @@ class ForesporselService(
         veilederident: Veilederident,
         virksomhetsnummer: Virksomhetsnummer,
         narmestelederPersonident: Personident,
+        document: List<DocumentComponent>,
     ): Foresporsel {
         val foresporsel =
             Foresporsel(
@@ -22,6 +24,7 @@ class ForesporselService(
                 veilederident = veilederident,
                 virksomhetsnummer = virksomhetsnummer,
                 narmestelederPersonident = narmestelederPersonident,
+                document = document,
             )
 
         val storedForesporsel = repository.createForesporsel(foresporsel)
@@ -37,8 +40,6 @@ class ForesporselService(
         repository.getForesporslerForJournalforing().map { foresporsel ->
             journalforingService.journalfor(
                 foresporsel = foresporsel,
-                // TODO: Generate PDF
-                pdf = byteArrayOf(),
             ).map { journalpostId ->
                 val journalfortForesporsel = foresporsel.journalfor(journalpostId = journalpostId)
                 repository.setJournalpostId(journalfortForesporsel)

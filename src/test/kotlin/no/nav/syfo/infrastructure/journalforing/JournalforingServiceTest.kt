@@ -26,6 +26,7 @@ class JournalforingServiceTest {
         JournalforingService(
             dokarkivClient = dokarkivMock,
             eregClient = externalMockEnvironment.eregClient,
+            pdfClient = externalMockEnvironment.pdfClient,
             isJournalforingRetryEnabled = externalMockEnvironment.environment.isJournalforingRetryEnabled,
         )
 
@@ -42,7 +43,6 @@ class JournalforingServiceTest {
             runBlocking {
                 journalforingService.journalfor(
                     foresporsel = foresporsel,
-                    pdf = UserConstants.PDF_FORESPORSEL,
                 )
             }.getOrThrow()
 
@@ -72,7 +72,6 @@ class JournalforingServiceTest {
             runBlocking {
                 journalforingService.journalfor(
                     foresporsel = failingForesporsel,
-                    pdf = UserConstants.PDF_FORESPORSEL,
                 )
             }
         result.isFailure shouldBeEqualTo true

@@ -5,22 +5,25 @@ import no.nav.syfo.domain.*
 import no.nav.syfo.infrastructure.clients.ereg.EregClient
 import no.nav.syfo.infrastructure.clients.dokarkiv.DokarkivClient
 import no.nav.syfo.infrastructure.clients.dokarkiv.dto.*
+import no.nav.syfo.infrastructure.clients.pdfgen.PdfGenClient
+import no.nav.syfo.infrastructure.clients.pdfgen.PdfModel
 import org.slf4j.LoggerFactory
 
 class JournalforingService(
     private val dokarkivClient: DokarkivClient,
     private val eregClient: EregClient,
+    private val pdfClient: PdfGenClient,
     private val isJournalforingRetryEnabled: Boolean,
 ) : IJournalforingService {
-    override suspend fun journalfor(
-        foresporsel: Foresporsel,
-        pdf: ByteArray
-    ): Result<JournalpostId> =
+    override suspend fun journalfor(foresporsel: Foresporsel): Result<JournalpostId> =
         runCatching {
             val journalpostRequest =
                 createJournalpostRequest(
                     foresporsel = foresporsel,
-                    pdf = pdf
+                    pdf =
+                        pdfClient.createForesporselPdf(
+                            payload = PdfModel.ForesporselPdfModel(foresporsel.document),
+                        )
                 )
 
             val journalpostId =
