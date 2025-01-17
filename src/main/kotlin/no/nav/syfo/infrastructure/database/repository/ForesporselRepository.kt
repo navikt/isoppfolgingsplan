@@ -75,6 +75,14 @@ class ForesporselRepository(val database: DatabaseInterface) : IForesporselRepos
         }
     }
 
+    override fun getUnpublishedForesporsler(): List<Foresporsel> =
+        database.connection.use { connection ->
+            connection.prepareStatement(GET_UNPUBLISHED_FORESPORSEL).use {
+                it.executeQuery()
+                    .toList { toPForesporsel().toForesporsel() }
+            }
+        }
+
     companion object {
         private const val CREATE_FORESPORSEL =
             """
@@ -115,6 +123,14 @@ class ForesporselRepository(val database: DatabaseInterface) : IForesporselRepos
         private const val SET_FORESPORSEL_JOURNALFORING =
             """
                 UPDATE foresporsel SET journalpost_id=? WHERE uuid=?
+            """
+
+        private const val GET_UNPUBLISHED_FORESPORSEL =
+            """
+                SELECT *
+                FROM foresporsel
+                WHERE published_at IS NULL
+                ORDER BY created_at ASC
             """
     }
 }

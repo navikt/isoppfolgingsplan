@@ -61,11 +61,7 @@ fun Route.registerOppfolgingsplanEndpoints(
                         virksomhetsnummer = Virksomhetsnummer(requestDTO.virksomhetsnummer),
                         narmestelederPersonident = Personident(requestDTO.narmestelederPersonident),
                     )
-
-                result.fold(
-                    onSuccess = { call.respond(HttpStatusCode.Created, ForesporselResponseDTO.fromForesporsel(it)) },
-                    onFailure = { call.respond(HttpStatusCode.InternalServerError, it.toString()) },
-                )
+                call.respond(HttpStatusCode.Created, ForesporselResponseDTO.fromForesporsel(result))
             }
         }
     }

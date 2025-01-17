@@ -52,6 +52,7 @@ fun testEnvironment() =
             ),
         electorPath = "electorPath",
         isJournalforingRetryEnabled = true,
+        narmestelederVarselEnabled = true,
     )
 
 fun testAppState() =

@@ -14,4 +14,6 @@ interface IForesporselRepository {
     fun setJournalpostId(journalfortForesporsel: Foresporsel)
 
     fun setPublishedAt(foresporselUuid: UUID)
+
+    fun getUnpublishedForesporsler(): List<Foresporsel>
 }
