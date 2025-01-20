@@ -13,13 +13,15 @@ class PdfGenClientSpek {
 
     @Test
     fun `returns bytearray of pdf for foresporsel`() {
-        val pdf = runBlocking {
-            pdfGenClient.createForesporselPdf(
-                payload = PdfModel.ForesporselPdfModel(
-                    documentComponents = generateDocumentComponent(),
+        val pdf =
+            runBlocking {
+                pdfGenClient.createForesporselPdf(
+                    payload =
+                        PdfModel.ForesporselPdfModel(
+                            documentComponents = generateDocumentComponent(),
+                        )
                 )
-            )
-        }
+            }
 
         pdf.size shouldBeEqualTo UserConstants.PDF_FORESPORSEL.size
         pdf.forEachIndexed { index, b -> b shouldBeEqualTo UserConstants.PDF_FORESPORSEL[index] }
