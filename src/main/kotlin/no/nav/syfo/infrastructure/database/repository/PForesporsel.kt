@@ -14,6 +14,7 @@ data class PForesporsel(
     val virksomhetsnummer: Virksomhetsnummer,
     val publishedAt: OffsetDateTime?,
     val journalpostId: JournalpostId?,
+    val document: List<DocumentComponent>,
 ) {
     fun toForesporsel() =
         Foresporsel.createFromDatabase(
@@ -24,5 +25,6 @@ data class PForesporsel(
             narmestelederPersonident = narmestelederPersonident,
             virksomhetsnummer = virksomhetsnummer,
             journalpostId = journalpostId,
+            document = document,
         )
 }

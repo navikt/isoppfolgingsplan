@@ -19,6 +19,8 @@ fun mockHttpClient(environment: Environment) =
                         eregMockResponse(request)
                     requestUrl.startsWith("/${environment.clients.dokarkiv.baseUrl}") ->
                         dokarkivMockResponse(request)
+                    requestUrl.startsWith("/${environment.clients.ispdfgen.baseUrl}") ->
+                        pdfGenMockResponse(request)
                     else -> error("Unhandled ${request.url.encodedPath}")
                 }
             }

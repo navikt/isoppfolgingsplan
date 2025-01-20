@@ -14,4 +14,5 @@ fun generateForsporsel(
         veilederident = UserConstants.VEILEDER_IDENT,
         virksomhetsnummer = virksomhetsnummer,
         narmestelederPersonident = UserConstants.NARMESTELEDER_FNR,
+        document = generateDocumentComponent(),
     )

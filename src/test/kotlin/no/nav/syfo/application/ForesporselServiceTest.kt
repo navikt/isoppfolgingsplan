@@ -4,6 +4,7 @@ import io.mockk.*
 import kotlinx.coroutines.runBlocking
 import no.nav.syfo.ExternalMockEnvironment
 import no.nav.syfo.UserConstants
+import no.nav.syfo.generator.generateDocumentComponent
 import no.nav.syfo.generator.generateForsporsel
 import no.nav.syfo.infrastructure.database.dropData
 import no.nav.syfo.infrastructure.database.repository.ForesporselRepository
@@ -33,6 +34,7 @@ class ForesporselServiceTest {
         JournalforingService(
             dokarkivClient = externalMockEnvironment.dokarkivClient,
             eregClient = externalMockEnvironment.eregClient,
+            pdfClient = externalMockEnvironment.pdfClient,
             isJournalforingRetryEnabled = externalMockEnvironment.environment.isJournalforingRetryEnabled,
         )
     private val foresporselRepository = ForesporselRepository(database)
@@ -58,6 +60,7 @@ class ForesporselServiceTest {
                 veilederident = UserConstants.VEILEDER_IDENT,
                 virksomhetsnummer = UserConstants.VIRKSOMHETSNUMMER,
                 narmestelederPersonident = UserConstants.NARMESTELEDER_FNR,
+                document = generateDocumentComponent(),
             )
 
         val stored = foresporselService.getForesporsler(UserConstants.ARBEIDSTAKER_PERSONIDENT)
@@ -65,6 +68,7 @@ class ForesporselServiceTest {
         val storedForesporsel = stored[0]
         storedForesporsel.uuid shouldBeEqualTo foresporsel.uuid
         storedForesporsel.journalpostId shouldBeEqualTo null
+        storedForesporsel.document shouldBeEqualTo foresporsel.document
     }
 
     @Test

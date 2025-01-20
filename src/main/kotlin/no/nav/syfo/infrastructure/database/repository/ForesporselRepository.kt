@@ -1,14 +1,18 @@
 package no.nav.syfo.infrastructure.database.repository
 
+import com.fasterxml.jackson.core.type.TypeReference
 import no.nav.syfo.application.IForesporselRepository
 import no.nav.syfo.domain.*
 import no.nav.syfo.infrastructure.database.DatabaseInterface
 import no.nav.syfo.infrastructure.database.toList
+import no.nav.syfo.util.configuredJacksonMapper
 import no.nav.syfo.util.nowUTC
 import java.sql.ResultSet
 import java.sql.SQLException
 import java.time.OffsetDateTime
 import java.util.*
+
+private val mapper = configuredJacksonMapper()
 
 class ForesporselRepository(val database: DatabaseInterface) : IForesporselRepository {
     override fun createForesporsel(foresporsel: Foresporsel): Foresporsel {
@@ -21,6 +25,7 @@ class ForesporselRepository(val database: DatabaseInterface) : IForesporselRepos
                     it.setString(4, foresporsel.veilederident.value)
                     it.setString(5, foresporsel.narmestelederPersonident.value)
                     it.setString(6, foresporsel.virksomhetsnummer.value)
+                    it.setObject(7, mapper.writeValueAsString(foresporsel.document))
                     it.executeQuery().toList { toPForesporsel() }.single()
                 }
             connection.commit()
@@ -93,8 +98,9 @@ class ForesporselRepository(val database: DatabaseInterface) : IForesporselRepos
                     arbeidstaker_personident,
                     veilederident,
                     narmesteleder_personident,
-                    virksomhetsnummer
-                ) VALUES (DEFAULT, ?, ?, ?, ?, ?, ?)
+                    virksomhetsnummer,
+                    document
+                ) VALUES (DEFAULT, ?, ?, ?, ?, ?, ?, ?::jsonb)
                 RETURNING *
             """
 
@@ -146,4 +152,9 @@ internal fun ResultSet.toPForesporsel(): PForesporsel =
         virksomhetsnummer = Virksomhetsnummer(getString("virksomhetsnummer")),
         publishedAt = getObject("published_at", OffsetDateTime::class.java),
         journalpostId = getString("journalpost_id")?.let { JournalpostId(it) },
+        document =
+            mapper.readValue(
+                getString("document"),
+                object : TypeReference<List<DocumentComponent>>() {}
+            ),
     )

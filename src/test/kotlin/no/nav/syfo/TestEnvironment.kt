@@ -49,6 +49,10 @@ fun testEnvironment() =
                     OpenClientEnvironment(
                         baseUrl = "ereg",
                     ),
+                ispdfgen =
+                    OpenClientEnvironment(
+                        baseUrl = "ispdfgen",
+                    ),
             ),
         electorPath = "electorPath",
         isJournalforingRetryEnabled = true,
