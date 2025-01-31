@@ -1,5 +1,6 @@
 package no.nav.syfo.api.model
 
+import no.nav.syfo.domain.DocumentComponent
 import no.nav.syfo.domain.Foresporsel
 import java.time.OffsetDateTime
 import java.util.*
@@ -11,6 +12,7 @@ data class ForesporselResponseDTO(
     val veilederident: String,
     val virksomhetsnummer: String,
     val narmestelederPersonident: String,
+    val document: List<DocumentComponent>,
 ) {
     companion object {
         fun fromForesporsel(foresporsel: Foresporsel) =
@@ -21,6 +23,7 @@ data class ForesporselResponseDTO(
                 veilederident = foresporsel.veilederident.value,
                 virksomhetsnummer = foresporsel.virksomhetsnummer.value,
                 narmestelederPersonident = foresporsel.narmestelederPersonident.value,
+                document = foresporsel.document,
             )
     }
 }
