@@ -38,11 +38,7 @@ fun Route.registerOppfolgingsplanEndpoints(
                         personident = personident,
                     )
                 val responseDTO = foresporsler.map { ForesporselResponseDTO.fromForesporsel(it) }
-                if (responseDTO.isEmpty()) {
-                    call.respond(HttpStatusCode.NoContent)
-                } else {
-                    call.respond(HttpStatusCode.OK, responseDTO)
-                }
+                call.respond(HttpStatusCode.OK, responseDTO)
             }
         }
 
