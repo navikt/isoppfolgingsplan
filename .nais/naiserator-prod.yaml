@@ -84,5 +84,3 @@ spec:
       value: "prod-gcp.teamsykefravr.istilgangskontroll"
     - name: ISTILGANGSKONTROLL_URL
       value: "http://istilgangskontroll"
-    - name: NARMESTELEDER_VARSEL_ENABLED
-      value: "false"

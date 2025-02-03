@@ -21,10 +21,9 @@ fun launchCronjobs(
     cronjobs.add(
         JournalforForesporselCronjob(foresporselService = foresporselService)
     )
-    if (environment.narmestelederVarselEnabled) {
-        val publishNarmestelederVarselCronjob = PublishNarmestelederVarselCronjob(foresporselService = foresporselService)
-        cronjobs.add(publishNarmestelederVarselCronjob)
-    }
+
+    val publishNarmestelederVarselCronjob = PublishNarmestelederVarselCronjob(foresporselService = foresporselService)
+    cronjobs.add(publishNarmestelederVarselCronjob)
 
     cronjobs.forEach {
         launchBackgroundTask(
