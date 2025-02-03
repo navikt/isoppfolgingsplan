@@ -57,7 +57,6 @@ data class Environment(
                 ),
         ),
     val isJournalforingRetryEnabled: Boolean = getEnvVar("JOURNALFORING_RETRY_ENABLED").toBoolean(),
-    val narmestelederVarselEnabled: Boolean = getEnvVar("NARMESTELEDER_VARSEL_ENABLED", "false").toBoolean(),
 )
 
 fun getEnvVar(
