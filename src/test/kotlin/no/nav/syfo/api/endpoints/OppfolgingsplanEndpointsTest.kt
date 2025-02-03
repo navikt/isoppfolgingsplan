@@ -97,6 +97,22 @@ object OppfolgingsplanEndpointsTest {
     }
 
     @Test
+    fun `Returns OK with empty list when no foresporsler`() {
+        testApplication {
+            val client = setupApiAndClient()
+
+            val response =
+                client.get("$URL_OPPFOLGINGSPLAN/foresporsler") {
+                    bearerAuth(validToken)
+                    header(NAV_PERSONIDENT_HEADER, ARBEIDSTAKER_PERSONIDENT.value)
+                }
+            assertEquals(HttpStatusCode.OK, response.status)
+            val responseBody = response.body<List<ForesporselResponseDTO>>()
+            assertEquals(emptyList(), responseBody)
+        }
+    }
+
+    @Test
     fun `Returns status Unauthorized if no token is supplied`() {
         testApplication {
             val client = setupApiAndClient()
