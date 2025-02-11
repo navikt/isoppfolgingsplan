@@ -10,8 +10,10 @@ object UserConstants {
     val ARBEIDSTAKER_PERSONIDENT_2 = Personident("12345678911")
     val ARBEIDSTAKER_PERSONIDENT_VEILEDER_NO_ACCESS = Personident("11111111111")
     val VIRKSOMHETSNUMMER = Virksomhetsnummer("981111117")
+    val OTHER_VIRKSOMHETSNUMMER = Virksomhetsnummer("981111127")
     val VIRKSOMHETSNAVN = "Bedriften"
     val NARMESTELEDER_FNR = Personident("98765432101")
+    val OTHER_NARMESTELEDER_FNR = Personident("98765432102")
     val VEILEDER_IDENT = Veilederident("Z999999")
 
     const val VIRKSOMHETSNUMMER_2 = "123456781"
