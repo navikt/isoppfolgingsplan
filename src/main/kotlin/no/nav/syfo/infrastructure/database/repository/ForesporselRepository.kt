@@ -109,6 +109,7 @@ class ForesporselRepository(val database: DatabaseInterface) : IForesporselRepos
                 SELECT *
                 FROM foresporsel
                 WHERE arbeidstaker_personident = ?
+                ORDER BY created_at DESC
             """
 
         private const val SET_PUBLISHED_AT =

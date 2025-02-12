@@ -14,6 +14,8 @@ import no.nav.syfo.ExternalMockEnvironment
 import no.nav.syfo.UserConstants.ARBEIDSTAKER_PERSONIDENT
 import no.nav.syfo.UserConstants.ARBEIDSTAKER_PERSONIDENT_VEILEDER_NO_ACCESS
 import no.nav.syfo.UserConstants.NARMESTELEDER_FNR
+import no.nav.syfo.UserConstants.OTHER_NARMESTELEDER_FNR
+import no.nav.syfo.UserConstants.OTHER_VIRKSOMHETSNUMMER
 import no.nav.syfo.UserConstants.VEILEDER_IDENT
 import no.nav.syfo.UserConstants.VIRKSOMHETSNUMMER
 import no.nav.syfo.api.generateJWT
@@ -93,6 +95,49 @@ object OppfolgingsplanEndpointsTest {
             assertEquals(storedForesporsel.arbeidstakerPersonident, foresporselRequestDTO.arbeidstakerPersonident)
             assertEquals(storedForesporsel.narmestelederPersonident, foresporselRequestDTO.narmestelederPersonident)
             assertEquals(storedForesporsel.virksomhetsnummer, foresporselRequestDTO.virksomhetsnummer)
+        }
+    }
+
+    @Test
+    fun `Returns foresporsler ordered by created descending`() {
+        testApplication {
+            val client = setupApiAndClient()
+            val foresporselRequestDTO = createForesporselRequestDTO()
+            val otherForesporselRequestDTO =
+                foresporselRequestDTO.copy(
+                    virksomhetsnummer = OTHER_VIRKSOMHETSNUMMER.value,
+                    narmestelederPersonident = OTHER_NARMESTELEDER_FNR.value,
+                )
+
+            client.post("$URL_OPPFOLGINGSPLAN/foresporsler") {
+                contentType(ContentType.Application.Json)
+                bearerAuth(validToken)
+                setBody(foresporselRequestDTO)
+            }.apply {
+                assertEquals(HttpStatusCode.Created, status)
+            }
+            client.post("$URL_OPPFOLGINGSPLAN/foresporsler") {
+                contentType(ContentType.Application.Json)
+                bearerAuth(validToken)
+                setBody(otherForesporselRequestDTO)
+            }.apply {
+                assertEquals(HttpStatusCode.Created, status)
+            }
+
+            val response =
+                client.get("$URL_OPPFOLGINGSPLAN/foresporsler") {
+                    bearerAuth(validToken)
+                    header(NAV_PERSONIDENT_HEADER, ARBEIDSTAKER_PERSONIDENT.value)
+                }
+
+            assertEquals(HttpStatusCode.OK, response.status)
+            val foresporsler = response.body<List<ForesporselResponseDTO>>()
+            assertEquals(foresporsler.size, 2)
+
+            val newestForesporsel = foresporsler.first()
+            val oldestForesporsel = foresporsler.last()
+            assertEquals(OTHER_VIRKSOMHETSNUMMER.value, newestForesporsel.virksomhetsnummer)
+            assertEquals(VIRKSOMHETSNUMMER.value, oldestForesporsel.virksomhetsnummer)
         }
     }
 
