@@ -5,7 +5,7 @@ import no.nav.syfo.domain.Foresporsel
 import no.nav.syfo.domain.Personident
 import no.nav.syfo.domain.Virksomhetsnummer
 
-fun generateForsporsel(
+fun generateForesporsel(
     arbeidstakerPersonident: Personident = UserConstants.ARBEIDSTAKER_PERSONIDENT,
     virksomhetsnummer: Virksomhetsnummer = UserConstants.VIRKSOMHETSNUMMER,
 ): Foresporsel =

@@ -22,6 +22,9 @@ import no.nav.syfo.infrastructure.kafka.VarselProducer
 import no.nav.syfo.infrastructure.kafka.esyfovarsel.EsyfovarselHendelse
 import no.nav.syfo.infrastructure.kafka.esyfovarsel.EsyfovarselHendelseProducer
 import no.nav.syfo.infrastructure.kafka.esyfovarsel.EsyfovarselHendelseSerializer
+import no.nav.syfo.infrastructure.kafka.identhendelse.IdenthendelseConsumer
+import no.nav.syfo.infrastructure.kafka.identhendelse.IdenthendelseService
+import no.nav.syfo.infrastructure.kafka.identhendelse.launchIdenthendelseConsumer
 import no.nav.syfo.infrastructure.kafka.kafkaAivenProducerConfig
 import org.apache.kafka.clients.producer.KafkaProducer
 import org.slf4j.LoggerFactory
@@ -124,6 +127,17 @@ fun main() {
                         applicationState = applicationState,
                         environment = environment,
                         foresporselService = foresporselService,
+                    )
+                    launchIdenthendelseConsumer(
+                        applicationState = applicationState,
+                        kafkaEnvironment = environment.kafka,
+                        identhendelseConsumer =
+                            IdenthendelseConsumer(
+                                identhendelseService =
+                                    IdenthendelseService(
+                                        repository = foresporselRepository,
+                                    )
+                            )
                     )
                 }
             },
