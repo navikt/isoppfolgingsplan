@@ -9,7 +9,7 @@ import no.nav.syfo.ExternalMockEnvironment
 import no.nav.syfo.UserConstants
 import no.nav.syfo.domain.Personident
 import no.nav.syfo.domain.Virksomhetsnummer
-import no.nav.syfo.generator.generateForsporsel
+import no.nav.syfo.generator.generateForesporsel
 import no.nav.syfo.infrastructure.clients.dokarkiv.DokarkivClient
 import no.nav.syfo.infrastructure.clients.dokarkiv.dto.*
 import no.nav.syfo.infrastructure.mock.dokarkivResponse
@@ -38,7 +38,7 @@ class JournalforingServiceTest {
 
     @Test
     fun `sender forventet journalpost til dokarkiv`() {
-        val foresporsel = generateForsporsel()
+        val foresporsel = generateForesporsel()
         val journalpostId =
             runBlocking {
                 journalforingService.journalfor(
@@ -67,7 +67,7 @@ class JournalforingServiceTest {
 
     @Test
     fun `feiler når kall til ereg feiler`() {
-        val failingForesporsel = generateForsporsel(virksomhetsnummer = UserConstants.VIRKSOMHETSNUMMER_NO_VIRKSOMHETSNAVN)
+        val failingForesporsel = generateForesporsel(virksomhetsnummer = UserConstants.VIRKSOMHETSNUMMER_NO_VIRKSOMHETSNAVN)
         val result =
             runBlocking {
                 journalforingService.journalfor(

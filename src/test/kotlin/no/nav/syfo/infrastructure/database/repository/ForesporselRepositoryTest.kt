@@ -2,7 +2,7 @@ package no.nav.syfo.infrastructure.database.repository
 
 import no.nav.syfo.ExternalMockEnvironment
 import no.nav.syfo.UserConstants
-import no.nav.syfo.generator.generateForsporsel
+import no.nav.syfo.generator.generateForesporsel
 import no.nav.syfo.infrastructure.database.dropData
 import no.nav.syfo.infrastructure.database.getForesporsel
 import no.nav.syfo.shouldBeEqualTo
@@ -17,7 +17,7 @@ class ForesporselRepositoryTest {
     private val database = externalMockEnvironment.database
     private val foresporselRepository = externalMockEnvironment.foresporselRepository
 
-    private val foresporsel = generateForsporsel()
+    private val foresporsel = generateForesporsel()
 
     @BeforeEach
     fun setup() {
@@ -54,7 +54,7 @@ class ForesporselRepositoryTest {
 
         @Test
         fun `gets Foresporsler only for given personident`() {
-            val otherForesporsel = generateForsporsel(UserConstants.ARBEIDSTAKER_PERSONIDENT_2)
+            val otherForesporsel = generateForesporsel(UserConstants.ARBEIDSTAKER_PERSONIDENT_2)
             foresporselRepository.createForesporsel(foresporsel)
             foresporselRepository.createForesporsel(otherForesporsel)
 
@@ -67,7 +67,7 @@ class ForesporselRepositoryTest {
 
         @Test
         fun `gets several Foresporsler for given personident`() {
-            val otherForesporsel = generateForsporsel()
+            val otherForesporsel = generateForesporsel()
             foresporselRepository.createForesporsel(foresporsel)
             foresporselRepository.createForesporsel(otherForesporsel)
 

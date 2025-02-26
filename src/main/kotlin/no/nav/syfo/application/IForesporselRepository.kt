@@ -16,4 +16,9 @@ interface IForesporselRepository {
     fun setPublishedAt(foresporselUuid: UUID)
 
     fun getUnpublishedForesporsler(): List<Foresporsel>
+
+    fun updateArbeidstakerPersonident(
+        nyPersonident: Personident,
+        foresporsler: List<Foresporsel>
+    )
 }

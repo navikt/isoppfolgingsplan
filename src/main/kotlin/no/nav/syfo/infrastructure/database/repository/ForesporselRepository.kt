@@ -88,6 +88,23 @@ class ForesporselRepository(val database: DatabaseInterface) : IForesporselRepos
             }
         }
 
+    override fun updateArbeidstakerPersonident(
+        nyPersonident: Personident,
+        foresporsler: List<Foresporsel>
+    ) = database.connection.use { connection ->
+        connection.prepareStatement(UPDATE_FORESPORSEL_ARBEIDSTAKER_PERSONIDENT).use {
+            foresporsler.forEach { foresporsel ->
+                it.setString(1, nyPersonident.value)
+                it.setString(2, foresporsel.uuid.toString())
+                val updated = it.executeUpdate()
+                if (updated != 1) {
+                    throw SQLException("Expected a single row to be updated, got update count $updated")
+                }
+            }
+        }
+        connection.commit()
+    }
+
     companion object {
         private const val CREATE_FORESPORSEL =
             """
@@ -138,6 +155,13 @@ class ForesporselRepository(val database: DatabaseInterface) : IForesporselRepos
                 FROM foresporsel
                 WHERE published_at IS NULL
                 ORDER BY created_at ASC
+            """
+
+        private const val UPDATE_FORESPORSEL_ARBEIDSTAKER_PERSONIDENT =
+            """
+            UPDATE foresporsel
+            SET arbeidstaker_personident = ?
+            WHERE uuid = ?
             """
     }
 }

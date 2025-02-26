@@ -5,7 +5,7 @@ import kotlinx.coroutines.runBlocking
 import no.nav.syfo.ExternalMockEnvironment
 import no.nav.syfo.UserConstants
 import no.nav.syfo.generator.generateDocumentComponent
-import no.nav.syfo.generator.generateForsporsel
+import no.nav.syfo.generator.generateForesporsel
 import no.nav.syfo.infrastructure.database.dropData
 import no.nav.syfo.infrastructure.database.repository.ForesporselRepository
 import no.nav.syfo.infrastructure.journalforing.JournalforingService
@@ -73,7 +73,7 @@ class ForesporselServiceTest {
 
     @Test
     fun journalforing() {
-        val foresporsel = foresporselRepository.createForesporsel(generateForsporsel())
+        val foresporsel = foresporselRepository.createForesporsel(generateForesporsel())
 
         runBlocking {
             foresporselService.journalforForesporsler()
@@ -88,7 +88,7 @@ class ForesporselServiceTest {
 
     @Test
     fun `sends unpublished foresporsel to narmeste leder`() {
-        foresporselRepository.createForesporsel(generateForsporsel())
+        foresporselRepository.createForesporsel(generateForesporsel())
 
         val results = foresporselService.publishedNarmestelederVarsler()
         results.size shouldBeEqualTo 1
@@ -108,7 +108,7 @@ class ForesporselServiceTest {
 
     @Test
     fun `does not send published foresporsel to narmeste leder`() {
-        val foresporsel = foresporselRepository.createForesporsel(generateForsporsel())
+        val foresporsel = foresporselRepository.createForesporsel(generateForesporsel())
         foresporselRepository.setPublishedAt(foresporsel.uuid)
 
         val results = foresporselService.publishedNarmestelederVarsler()
@@ -118,7 +118,7 @@ class ForesporselServiceTest {
     @Test
     fun `send to narmeste leder fails when kafka producer fails`() {
         coEvery { kafkaProducerMock.send(any()) } throws Exception("Kafka error")
-        foresporselRepository.createForesporsel(generateForsporsel())
+        foresporselRepository.createForesporsel(generateForesporsel())
 
         val results = foresporselService.publishedNarmestelederVarsler()
         results.size shouldBeEqualTo 1
