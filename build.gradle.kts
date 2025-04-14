@@ -13,7 +13,7 @@ val micrometerRegistryVersion = "1.12.13"
 val jacksonDatatypeVersion = "2.18.3"
 val ktorVersion = "3.1.2"
 val mockkVersion = "1.13.17"
-val nimbusJoseJwtVersion = "9.47"
+val nimbusJoseJwtVersion = "10.2"
 val kotlinVersion = "2.1.20"
 
 plugins {
