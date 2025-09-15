@@ -84,6 +84,7 @@ class JournalforingService(
             dokumenter = dokumenter,
             overstyrInnsynsregler = OverstyrInnsynsregler.VISES_MASKINELT_GODKJENT.name,
             eksternReferanseId = foresporsel.uuid.toString(),
+            kanal = JournalpostKanal.DITT_NAV.value,
         )
     }
 

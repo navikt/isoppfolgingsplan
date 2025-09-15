@@ -60,6 +60,7 @@ class JournalforingServiceTest {
                         mottakerNavn = UserConstants.VIRKSOMHETSNAVN,
                         brukerPersonident = UserConstants.ARBEIDSTAKER_PERSONIDENT,
                         overstyrInnsynsregler = OverstyrInnsynsregler.VISES_MASKINELT_GODKJENT,
+                        kanal = JournalpostKanal.DITT_NAV,
                     )
             )
         }
@@ -87,7 +88,7 @@ fun generateJournalpostRequest(
     mottakerVirksomhetsnummer: Virksomhetsnummer,
     mottakerNavn: String,
     brukerPersonident: Personident,
-    kanal: JournalpostKanal? = null,
+    kanal: JournalpostKanal,
     overstyrInnsynsregler: OverstyrInnsynsregler? = null,
 ) = JournalpostRequest(
     avsenderMottaker =
@@ -118,7 +119,7 @@ fun generateJournalpostRequest(
                     ),
             ),
         ),
-    kanal = kanal?.name,
+    kanal = kanal.value,
     overstyrInnsynsregler = overstyrInnsynsregler?.name,
     journalpostType = JournalpostType.UTGAAENDE.name,
     eksternReferanseId = eksternReferanse.toString(),
