@@ -19,7 +19,7 @@ val kotlinVersion = "2.2.10"
 
 plugins {
     kotlin("jvm") version "2.2.10"
-    id("com.gradleup.shadow") version "8.3.6"
+    id("com.gradleup.shadow") version "9.1.0"
     id("org.jlleitschuh.gradle.ktlint") version "12.2.0"
 }
 
