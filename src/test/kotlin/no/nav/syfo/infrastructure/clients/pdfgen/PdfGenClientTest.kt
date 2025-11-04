@@ -7,7 +7,7 @@ import no.nav.syfo.generator.generateDocumentComponent
 import no.nav.syfo.shouldBeEqualTo
 import org.junit.jupiter.api.Test
 
-class PdfGenClientSpek {
+class PdfGenClientTest {
     val externalMockEnvironment = ExternalMockEnvironment.instance
     val pdfGenClient = externalMockEnvironment.pdfClient
 

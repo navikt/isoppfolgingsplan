@@ -7,10 +7,10 @@ import no.nav.syfo.generator.generateIdenthendelse
 import no.nav.syfo.infrastructure.database.dropData
 import no.nav.syfo.infrastructure.database.repository.ForesporselRepository
 import no.nav.syfo.infrastructure.kafka.identhendelse.IdenthendelseService
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertTrue
 
 private val aktivIdent = UserConstants.ARBEIDSTAKER_PERSONIDENT
 private val inaktivIdent = UserConstants.ARBEIDSTAKER_PERSONIDENT_2
