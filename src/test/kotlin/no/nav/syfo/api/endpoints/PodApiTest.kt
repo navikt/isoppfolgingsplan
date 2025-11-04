@@ -9,10 +9,8 @@ import no.nav.syfo.ApplicationState
 import no.nav.syfo.infrastructure.database.DatabaseInterface
 import no.nav.syfo.infrastructure.database.TestDatabase
 import no.nav.syfo.infrastructure.database.TestDatabaseNotResponding
-import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertNotNull
-import kotlin.test.assertTrue
+import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.Test
 
 object PodApiTest {
     private val database = TestDatabase()

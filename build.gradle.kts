@@ -1,3 +1,5 @@
+import com.adarshr.gradle.testlogger.theme.ThemeType
+
 group = "no.nav.syfo"
 version = "0.0.1"
 
@@ -15,12 +17,12 @@ val jacksonDatatypeVersion = "2.20.0"
 val ktorVersion = "3.3.0"
 val mockkVersion = "1.14.5"
 val nimbusJoseJwtVersion = "10.5"
-val kotlinVersion = "2.2.20"
 
 plugins {
     kotlin("jvm") version "2.2.20"
     id("com.gradleup.shadow") version "8.3.6"
     id("org.jlleitschuh.gradle.ktlint") version "12.2.0"
+    id("com.adarshr.test-logger") version "4.0.0"
 }
 
 repositories {
@@ -93,11 +95,11 @@ dependencies {
     }
 
     // Tests
+    testImplementation(kotlin("test"))
     testImplementation("io.ktor:ktor-server-test-host:$ktorVersion")
     testImplementation("io.mockk:mockk:$mockkVersion")
     testImplementation("io.ktor:ktor-client-mock:$ktorVersion")
     testImplementation("com.nimbusds:nimbus-jose-jwt:$nimbusJoseJwtVersion")
-    testImplementation("org.jetbrains.kotlin:kotlin-test:$kotlinVersion")
 }
 
 kotlin {
@@ -124,6 +126,10 @@ tasks {
 
     test {
         useJUnitPlatform()
-        testLogging.showStandardStreams = true
+        testlogger {
+            theme = ThemeType.STANDARD_PARALLEL
+            showFullStackTraces = true
+            showPassed = false
+        }
     }
 }

@@ -19,10 +19,10 @@ import no.nav.syfo.shouldNotBeEqualTo
 import org.apache.kafka.clients.producer.KafkaProducer
 import org.apache.kafka.clients.producer.ProducerRecord
 import org.apache.kafka.clients.producer.RecordMetadata
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 import java.util.concurrent.Future
-import kotlin.test.Test
-import kotlin.test.assertTrue
 
 class ForesporselServiceTest {
     private val externalMockEnvironment = ExternalMockEnvironment.instance

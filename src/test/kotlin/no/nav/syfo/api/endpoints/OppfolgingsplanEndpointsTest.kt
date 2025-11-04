@@ -27,9 +27,9 @@ import no.nav.syfo.generator.generateDocumentComponent
 import no.nav.syfo.infrastructure.NAV_PERSONIDENT_HEADER
 import no.nav.syfo.infrastructure.database.dropData
 import no.nav.syfo.util.configure
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import kotlin.test.assertEquals
 
 object OppfolgingsplanEndpointsTest {
     private const val URL_OPPFOLGINGSPLAN = "/api/internad/v1/oppfolgingsplan"
@@ -153,7 +153,7 @@ object OppfolgingsplanEndpointsTest {
                 }
             assertEquals(HttpStatusCode.OK, response.status)
             val responseBody = response.body<List<ForesporselResponseDTO>>()
-            assertEquals(emptyList(), responseBody)
+            assertEquals(emptyList<ForesporselResponseDTO>(), responseBody)
         }
     }
 
