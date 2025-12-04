@@ -3,24 +3,24 @@ import com.adarshr.gradle.testlogger.theme.ThemeType
 group = "no.nav.syfo"
 version = "0.0.1"
 
-val confluentVersion = "7.9.0"
-val flywayVersion = "11.13.1"
-val hikariVersion = "6.3.0"
+val confluentVersion = "8.1.0"
+val flywayVersion = "11.17.1"
+val hikariVersion = "7.0.2"
 val postgresVersion = "42.7.8"
-val postgresEmbeddedVersion = "2.1.1"
+val postgresEmbeddedVersion = "2.2.0"
 val postgresRuntimeVersion = "17.6.0"
-val kafkaVersion = "3.9.0"
-val logbackVersion = "1.5.18"
-val logstashEncoderVersion = "8.1"
+val kafkaVersion = "4.1.0"
+val logbackVersion = "1.5.21"
+val logstashEncoderVersion = "9.0"
 val micrometerRegistryVersion = "1.12.13"
-val jacksonDatatypeVersion = "2.20.0"
-val ktorVersion = "3.3.0"
-val mockkVersion = "1.14.5"
-val nimbusJoseJwtVersion = "10.5"
+val jacksonDatatypeVersion = "2.20.1"
+val ktorVersion = "3.3.3"
+val mockkVersion = "1.14.6"
+val nimbusJoseJwtVersion = "10.6"
 
 plugins {
-    kotlin("jvm") version "2.2.20"
-    id("com.gradleup.shadow") version "8.3.6"
+    kotlin("jvm") version "2.2.21"
+    id("com.gradleup.shadow") version "8.3.8"
     id("org.jlleitschuh.gradle.ktlint") version "12.2.0"
     id("com.adarshr.test-logger") version "4.0.0"
 }
@@ -89,7 +89,7 @@ dependencies {
         implementation("org.apache.commons:commons-compress") {
             because("org.apache.commons:commons-compress:1.22 -> https://www.cve.org/CVERecord?id=CVE-2012-2098")
             version {
-                require("1.27.1")
+                require("1.28.0")
             }
         }
     }
