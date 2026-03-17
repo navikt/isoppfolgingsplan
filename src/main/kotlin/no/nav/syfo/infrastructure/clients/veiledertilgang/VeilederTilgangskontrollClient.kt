@@ -25,11 +25,11 @@ class VeilederTilgangskontrollClient(
     private val tilgangskontrollPersonUrl = "${clientEnvironment.baseUrl}$TILGANGSKONTROLL_PERSON_PATH"
     private val tilgangskontrollBrukereUrl = "${clientEnvironment.baseUrl}$TILGANGSKONTROLL_BRUKERE_PATH"
 
-    suspend fun hasAccess(
+    private suspend fun getTilgang(
         callId: String,
         personIdent: Personident,
         token: String,
-    ): Boolean {
+    ): Tilgang? {
         val onBehalfOfToken =
             azureAdClient.getOnBehalfOfToken(
                 scopeClientId = clientEnvironment.clientId,
@@ -45,16 +45,40 @@ class VeilederTilgangskontrollClient(
                     accept(ContentType.Application.Json)
                 }
             Metrics.COUNT_CALL_TILGANGSKONTROLL_PERSON_SUCCESS.increment()
-            tilgang.body<Tilgang>().erGodkjent
+            tilgang.body<Tilgang>()
         } catch (e: ResponseException) {
             if (e.response.status == HttpStatusCode.Forbidden) {
                 Metrics.COUNT_CALL_TILGANGSKONTROLL_PERSON_FORBIDDEN.increment()
             } else {
                 handleUnexpectedResponseException(e.response, callId)
             }
-            false
+            null
         }
     }
+
+    suspend fun hasAccess(
+        callId: String,
+        personIdent: Personident,
+        token: String,
+    ): Boolean =
+        getTilgang(
+            callId = callId,
+            personIdent = personIdent,
+            token = token,
+        )?.erGodkjent ?: false
+
+    suspend fun hasWriteAccess(
+        callId: String,
+        personIdent: Personident,
+        token: String,
+    ): Boolean =
+        getTilgang(
+            callId = callId,
+            personIdent = personIdent,
+            token = token,
+        )?.let {
+            it.erGodkjent && it.fullTilgang
+        } ?: false
 
     suspend fun veilederPersonerAccess(
         personidenter: List<Personident>,
