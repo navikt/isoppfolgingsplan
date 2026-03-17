@@ -31,6 +31,11 @@ repositories {
     maven(url = "https://packages.confluent.io/maven/")
 }
 
+configurations.all {
+    exclude(group = "log4j")
+    exclude(group = "org.apache.logging.log4j")
+}
+
 dependencies {
     implementation(kotlin("stdlib"))
     implementation(kotlin("reflect"))
