@@ -49,6 +49,7 @@ fun Route.registerOppfolgingsplanEndpoints(
                 action = "POST /foresporsler",
                 personident = Personident(requestDTO.arbeidstakerPersonident),
                 veilederTilgangskontrollClient = veilederTilgangskontrollClient,
+                requiresWriteAccess = true,
             ) {
                 val result =
                     foresporselService.createForesporsel(
