@@ -14,7 +14,7 @@ import no.nav.syfo.infrastructure.NAV_PERSONIDENT_HEADER
 import no.nav.syfo.tilgangskontroll.client.VeilederTilgangskontrollClient
 import no.nav.syfo.tilgangskontroll.ktor.checkVeilederTilgang
 import no.nav.syfo.tilgangskontroll.ktor.getNAVIdent
-import no.nav.syfo.tilgangskontroll.ktor.getPersonIdent
+import no.nav.syfo.tilgangskontroll.ktor.getPersonident
 
 fun Route.registerOppfolgingsplanEndpoints(
     veilederTilgangskontrollClient: VeilederTilgangskontrollClient,
@@ -23,7 +23,7 @@ fun Route.registerOppfolgingsplanEndpoints(
     route("/api/internad/v1/oppfolgingsplan") {
         get("/foresporsler") {
             val personidentString =
-                call.getPersonIdent()
+                call.getPersonident()
                     ?: throw IllegalArgumentException(
                         "Failed to access foresporsel for person: No $NAV_PERSONIDENT_HEADER supplied in request header"
                     )
