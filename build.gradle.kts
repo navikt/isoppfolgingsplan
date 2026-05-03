@@ -33,8 +33,8 @@ repositories {
     maven {
         url = uri("https://maven.pkg.github.com/navikt/isyfo-backend-utils")
         credentials {
-            username = System.getenv("GITHUB_ACTOR") ?: System.getenv("ORG_GRADLE_PROJECT_githubUser")
-            password = System.getenv("GITHUB_TOKEN") ?: System.getenv("ORG_GRADLE_PROJECT_githubPassword")
+            username = project.findProperty("githubUser") as String?
+            password = project.findProperty("githubPassword") as String?
         }
     }
 }
