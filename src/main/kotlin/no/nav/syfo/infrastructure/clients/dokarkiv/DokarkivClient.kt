@@ -9,7 +9,7 @@ import io.ktor.http.*
 import io.micrometer.core.instrument.Counter
 import net.logstash.logback.argument.StructuredArguments
 import no.nav.syfo.infrastructure.clients.ClientEnvironment
-import no.nav.syfo.infrastructure.clients.azuread.AzureAdClient
+import no.nav.syfo.azure.AzureAdClient
 import no.nav.syfo.infrastructure.bearerHeader
 import no.nav.syfo.infrastructure.clients.dokarkiv.dto.JournalpostRequest
 import no.nav.syfo.infrastructure.clients.dokarkiv.dto.JournalpostResponse
