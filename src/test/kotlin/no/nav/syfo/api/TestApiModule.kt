@@ -18,10 +18,11 @@ fun Application.testApiModule(externalMockEnvironment: ExternalMockEnvironment) 
     val veilederTilgangskontrollClient =
         VeilederTilgangskontrollClient(
             azureAdClient = externalMockEnvironment.azureAdClient,
-            config = VeilederTilgangConfig(
-                baseUrl = externalMockEnvironment.environment.clients.istilgangskontroll.baseUrl,
-                clientId = externalMockEnvironment.environment.clients.istilgangskontroll.clientId,
-            ),
+            config =
+                VeilederTilgangConfig(
+                    baseUrl = externalMockEnvironment.environment.clients.istilgangskontroll.baseUrl,
+                    clientId = externalMockEnvironment.environment.clients.istilgangskontroll.clientId,
+                ),
             httpClient = externalMockEnvironment.mockHttpClient,
         )
     val dokarkivClient =

@@ -47,10 +47,11 @@ fun main() {
     val veilederTilgangskontrollClient =
         VeilederTilgangskontrollClient(
             azureAdClient = azureAdClient,
-            config = VeilederTilgangConfig(
-                baseUrl = environment.clients.istilgangskontroll.baseUrl,
-                clientId = environment.clients.istilgangskontroll.clientId,
-            ),
+            config =
+                VeilederTilgangConfig(
+                    baseUrl = environment.clients.istilgangskontroll.baseUrl,
+                    clientId = environment.clients.istilgangskontroll.clientId,
+                ),
         )
     val kafkaProducer =
         KafkaProducer<String, EsyfovarselHendelse>(
