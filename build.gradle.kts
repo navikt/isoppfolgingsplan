@@ -47,7 +47,7 @@ dependencies {
     implementation(kotlin("stdlib"))
     implementation(kotlin("reflect"))
 
-    implementation("no.nav.syfo:isyfo-backend-utils:0.0.4")
+    implementation("no.nav.syfo:isyfo-backend-utils:0.0.5")
 
     implementation("io.ktor:ktor-client-apache:$ktorVersion")
     implementation("io.ktor:ktor-client-content-negotiation:$ktorVersion")
