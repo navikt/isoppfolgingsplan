@@ -6,7 +6,8 @@ import no.nav.syfo.application.ForesporselService
 import no.nav.syfo.infrastructure.clients.dokarkiv.DokarkivClient
 import no.nav.syfo.infrastructure.clients.ereg.EregClient
 import no.nav.syfo.infrastructure.clients.pdfgen.PdfGenClient
-import no.nav.syfo.infrastructure.clients.veiledertilgang.VeilederTilgangskontrollClient
+import no.nav.syfo.tilgangskontroll.client.VeilederTilgangskontrollClient
+import no.nav.syfo.tilgangskontroll.client.VeilederTilgangConfig
 import no.nav.syfo.infrastructure.database.repository.ForesporselRepository
 import no.nav.syfo.infrastructure.journalforing.JournalforingService
 
@@ -17,7 +18,10 @@ fun Application.testApiModule(externalMockEnvironment: ExternalMockEnvironment) 
     val veilederTilgangskontrollClient =
         VeilederTilgangskontrollClient(
             azureAdClient = externalMockEnvironment.azureAdClient,
-            clientEnvironment = externalMockEnvironment.environment.clients.istilgangskontroll,
+            config = VeilederTilgangConfig(
+                baseUrl = externalMockEnvironment.environment.clients.istilgangskontroll.baseUrl,
+                clientId = externalMockEnvironment.environment.clients.istilgangskontroll.clientId,
+            ),
             httpClient = externalMockEnvironment.mockHttpClient,
         )
     val dokarkivClient =

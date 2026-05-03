@@ -27,8 +27,16 @@ plugins {
 }
 
 repositories {
+    mavenLocal()
     mavenCentral()
     maven(url = "https://packages.confluent.io/maven/")
+    maven {
+        url = uri("https://maven.pkg.github.com/navikt/isyfo-backend-utils")
+        credentials {
+            username = System.getenv("GITHUB_ACTOR") ?: System.getenv("ORG_GRADLE_PROJECT_githubUser")
+            password = System.getenv("GITHUB_TOKEN") ?: System.getenv("ORG_GRADLE_PROJECT_githubPassword")
+        }
+    }
 }
 
 configurations.all {
@@ -39,6 +47,8 @@ configurations.all {
 dependencies {
     implementation(kotlin("stdlib"))
     implementation(kotlin("reflect"))
+
+    implementation("no.nav.syfo:isyfo-backend-utils:0.0.4")
 
     implementation("io.ktor:ktor-client-apache:$ktorVersion")
     implementation("io.ktor:ktor-client-content-negotiation:$ktorVersion")

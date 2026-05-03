@@ -22,15 +22,15 @@ import no.nav.syfo.api.endpoints.podEndpoints
 import no.nav.syfo.api.endpoints.registerOppfolgingsplanEndpoints
 import no.nav.syfo.application.ForesporselService
 import no.nav.syfo.application.exception.ConflictException
-import no.nav.syfo.application.exception.ForbiddenAccessVeilederException
+import no.nav.syfo.tilgangskontroll.ktor.ForbiddenAccessVeilederException
 import no.nav.syfo.infrastructure.NAV_CALL_ID_HEADER
-import no.nav.syfo.infrastructure.clients.veiledertilgang.VeilederTilgangskontrollClient
+import no.nav.syfo.tilgangskontroll.client.VeilederTilgangskontrollClient
 import no.nav.syfo.infrastructure.clients.wellknown.WellKnown
 import no.nav.syfo.infrastructure.database.DatabaseInterface
 import no.nav.syfo.infrastructure.metric.METRICS_REGISTRY
 import no.nav.syfo.util.configure
-import no.nav.syfo.util.getCallId
-import no.nav.syfo.util.getConsumerClientId
+import no.nav.syfo.tilgangskontroll.ktor.getCallId
+import no.nav.syfo.tilgangskontroll.ktor.getConsumerClientId
 import java.time.Duration
 import java.util.*
 

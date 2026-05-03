@@ -4,7 +4,6 @@ import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
 import com.nimbusds.jose.jwk.JWKSet
 import com.nimbusds.jose.jwk.RSAKey
-import no.nav.syfo.util.JWT_CLAIM_NAVIDENT
 import java.io.IOException
 import java.nio.charset.StandardCharsets
 import java.nio.file.Files
@@ -14,6 +13,7 @@ import java.time.LocalDateTime
 import java.time.ZoneId
 import java.util.*
 
+private const val JWT_CLAIM_NAVIDENT = "NAVident"
 const val KEY_ID = "localhost-signer"
 
 // Mock of JWT-token supplied by AzureAD. KeyId must match kid in jwkset.json
