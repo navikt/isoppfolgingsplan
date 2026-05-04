@@ -7,11 +7,12 @@ import io.ktor.server.engine.*
 import io.ktor.server.netty.*
 import no.nav.syfo.api.apiModule
 import no.nav.syfo.application.ForesporselService
-import no.nav.syfo.infrastructure.clients.azuread.AzureAdClient
+import no.nav.syfo.azure.AzureAdClient
 import no.nav.syfo.infrastructure.clients.dokarkiv.DokarkivClient
 import no.nav.syfo.infrastructure.clients.ereg.EregClient
 import no.nav.syfo.infrastructure.clients.pdfgen.PdfGenClient
-import no.nav.syfo.infrastructure.clients.veiledertilgang.VeilederTilgangskontrollClient
+import no.nav.syfo.tilgangskontroll.client.VeilederTilgangskontrollClient
+import no.nav.syfo.tilgangskontroll.client.VeilederTilgangConfig
 import no.nav.syfo.infrastructure.clients.wellknown.getWellKnown
 import no.nav.syfo.infrastructure.cronjob.launchCronjobs
 import no.nav.syfo.infrastructure.database.applicationDatabase
@@ -46,7 +47,11 @@ fun main() {
     val veilederTilgangskontrollClient =
         VeilederTilgangskontrollClient(
             azureAdClient = azureAdClient,
-            clientEnvironment = environment.clients.istilgangskontroll,
+            config =
+                VeilederTilgangConfig(
+                    baseUrl = environment.clients.istilgangskontroll.baseUrl,
+                    clientId = environment.clients.istilgangskontroll.clientId,
+                ),
         )
     val kafkaProducer =
         KafkaProducer<String, EsyfovarselHendelse>(
