@@ -32,8 +32,8 @@ repositories {
     maven {
         url = uri("https://maven.pkg.github.com/navikt/isyfo-backend-common")
         credentials {
-            username = project.findProperty("githubUser") as String?
-            password = project.findProperty("githubPassword") as String?
+            username = project.findProperty("githubUser") as String? ?: "x-access-token"
+            password = project.findProperty("githubPassword") as String? ?: System.getenv("GITHUB_TOKEN")
         }
     }
 }
