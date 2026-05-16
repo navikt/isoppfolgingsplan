@@ -13,8 +13,8 @@ import no.nav.syfo.domain.Virksomhetsnummer
 import no.nav.syfo.infrastructure.NAV_PERSONIDENT_HEADER
 import no.nav.syfo.common.tilgangskontroll.client.TilgangskontrollClient
 import no.nav.syfo.common.tilgangskontroll.ktor.checkVeilederTilgang
-import no.nav.syfo.common.util.ktor.getNAVIdent
-import no.nav.syfo.common.util.ktor.getPersonident
+import no.nav.syfo.common.util.ktor.getNavIdent
+import no.nav.syfo.common.util.ktor.getPersonIdent
 
 fun Route.registerOppfolgingsplanEndpoints(
     tilgangskontrollClient: TilgangskontrollClient,
@@ -23,7 +23,7 @@ fun Route.registerOppfolgingsplanEndpoints(
     route("/api/internad/v1/oppfolgingsplan") {
         get("/foresporsler") {
             val personidentString =
-                call.getPersonident()
+                call.getPersonIdent()
                     ?: throw IllegalArgumentException(
                         "Failed to access foresporsel for person: No $NAV_PERSONIDENT_HEADER supplied in request header"
                     )
@@ -54,7 +54,7 @@ fun Route.registerOppfolgingsplanEndpoints(
                 val result =
                     foresporselService.createForesporsel(
                         arbeidstakerPersonident = Personident(requestDTO.arbeidstakerPersonident),
-                        veilederident = Veilederident(call.getNAVIdent()),
+                        veilederident = Veilederident(call.getNavIdent()),
                         virksomhetsnummer = Virksomhetsnummer(requestDTO.virksomhetsnummer),
                         narmestelederPersonident = Personident(requestDTO.narmestelederPersonident),
                         document = requestDTO.document,
