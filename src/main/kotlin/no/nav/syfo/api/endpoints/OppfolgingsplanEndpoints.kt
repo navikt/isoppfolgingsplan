@@ -11,13 +11,13 @@ import no.nav.syfo.domain.Personident
 import no.nav.syfo.domain.Veilederident
 import no.nav.syfo.domain.Virksomhetsnummer
 import no.nav.syfo.infrastructure.NAV_PERSONIDENT_HEADER
-import no.nav.syfo.tilgangskontroll.client.VeilederTilgangskontrollClient
-import no.nav.syfo.tilgangskontroll.ktor.checkVeilederTilgang
-import no.nav.syfo.tilgangskontroll.ktor.getNAVIdent
-import no.nav.syfo.tilgangskontroll.ktor.getPersonident
+import no.nav.syfo.common.tilgangskontroll.client.TilgangskontrollClient
+import no.nav.syfo.common.tilgangskontroll.ktor.checkVeilederTilgang
+import no.nav.syfo.common.util.ktor.getNAVIdent
+import no.nav.syfo.common.util.ktor.getPersonident
 
 fun Route.registerOppfolgingsplanEndpoints(
-    veilederTilgangskontrollClient: VeilederTilgangskontrollClient,
+    tilgangskontrollClient: TilgangskontrollClient,
     foresporselService: ForesporselService,
 ) {
     route("/api/internad/v1/oppfolgingsplan") {
@@ -31,7 +31,7 @@ fun Route.registerOppfolgingsplanEndpoints(
             checkVeilederTilgang(
                 action = "GET /foresporsler",
                 personident = personidentString,
-                veilederTilgangskontrollClient = veilederTilgangskontrollClient,
+                tilgangskontrollClient = tilgangskontrollClient,
             ) {
                 val foresporsler =
                     foresporselService.getForesporsler(
@@ -48,7 +48,7 @@ fun Route.registerOppfolgingsplanEndpoints(
             checkVeilederTilgang(
                 action = "POST /foresporsler",
                 personident = requestDTO.arbeidstakerPersonident,
-                veilederTilgangskontrollClient = veilederTilgangskontrollClient,
+                tilgangskontrollClient = tilgangskontrollClient,
                 requiresWriteAccess = true,
             ) {
                 val result =
