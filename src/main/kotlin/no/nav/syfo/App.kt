@@ -7,7 +7,7 @@ import io.ktor.server.engine.*
 import io.ktor.server.netty.*
 import no.nav.syfo.api.apiModule
 import no.nav.syfo.application.ForesporselService
-import no.nav.syfo.common.azure.AzureAdClient
+import no.nav.syfo.infrastructure.clients.azuread.AzureAdClient
 import no.nav.syfo.infrastructure.clients.dokarkiv.DokarkivClient
 import no.nav.syfo.infrastructure.clients.ereg.EregClient
 import no.nav.syfo.infrastructure.clients.pdfgen.PdfGenClient
@@ -46,7 +46,12 @@ fun main() {
         )
     val tilgangskontrollClient =
         TilgangskontrollClient(
-            azureAdClient = azureAdClient,
+            oboTokenProvider = { scopeClientId, token ->
+                azureAdClient.getOnBehalfOfToken(
+                    scopeClientId,
+                    token
+                )?.accessToken
+            },
             config =
                 TilgangskontrollClientConfig(
                     baseUrl = environment.clients.istilgangskontroll.baseUrl,
