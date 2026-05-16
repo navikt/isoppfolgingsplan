@@ -5,7 +5,7 @@ import no.nav.syfo.application.IForesporselRepository
 import no.nav.syfo.domain.*
 import no.nav.syfo.infrastructure.database.DatabaseInterface
 import no.nav.syfo.infrastructure.database.toList
-import no.nav.syfo.util.configuredJacksonMapper
+import no.nav.syfo.common.util.configuredJacksonMapper
 import no.nav.syfo.util.nowUTC
 import java.sql.ResultSet
 import java.sql.SQLException

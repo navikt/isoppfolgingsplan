@@ -28,7 +28,7 @@ import no.nav.syfo.common.tilgangskontroll.client.TilgangskontrollClient
 import no.nav.syfo.infrastructure.clients.wellknown.WellKnown
 import no.nav.syfo.infrastructure.database.DatabaseInterface
 import no.nav.syfo.infrastructure.metric.METRICS_REGISTRY
-import no.nav.syfo.util.configure
+import no.nav.syfo.common.util.applyCommonJacksonConfig
 import no.nav.syfo.common.util.ktor.getCallId
 import no.nav.syfo.common.util.ktor.getConsumerClientId
 import java.time.Duration
@@ -71,7 +71,7 @@ fun Application.apiModule(
 
 fun Application.installContentNegotiation() {
     install(ContentNegotiation) {
-        jackson { configure() }
+        jackson { applyCommonJacksonConfig() }
     }
 }
 
