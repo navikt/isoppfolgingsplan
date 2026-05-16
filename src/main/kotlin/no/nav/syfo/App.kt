@@ -7,12 +7,12 @@ import io.ktor.server.engine.*
 import io.ktor.server.netty.*
 import no.nav.syfo.api.apiModule
 import no.nav.syfo.application.ForesporselService
-import no.nav.syfo.azure.AzureAdClient
+import no.nav.syfo.common.azure.AzureAdClient
 import no.nav.syfo.infrastructure.clients.dokarkiv.DokarkivClient
 import no.nav.syfo.infrastructure.clients.ereg.EregClient
 import no.nav.syfo.infrastructure.clients.pdfgen.PdfGenClient
-import no.nav.syfo.tilgangskontroll.client.VeilederTilgangskontrollClient
-import no.nav.syfo.tilgangskontroll.client.VeilederTilgangConfig
+import no.nav.syfo.common.tilgangskontroll.client.TilgangskontrollClient
+import no.nav.syfo.common.tilgangskontroll.client.TilgangskontrollClientConfig
 import no.nav.syfo.infrastructure.clients.wellknown.getWellKnown
 import no.nav.syfo.infrastructure.cronjob.launchCronjobs
 import no.nav.syfo.infrastructure.database.applicationDatabase
@@ -44,11 +44,11 @@ fun main() {
         AzureAdClient(
             azureEnvironment = environment.azure,
         )
-    val veilederTilgangskontrollClient =
-        VeilederTilgangskontrollClient(
+    val tilgangskontrollClient =
+        TilgangskontrollClient(
             azureAdClient = azureAdClient,
             config =
-                VeilederTilgangConfig(
+                TilgangskontrollClientConfig(
                     baseUrl = environment.clients.istilgangskontroll.baseUrl,
                     clientId = environment.clients.istilgangskontroll.clientId,
                 ),
@@ -122,7 +122,7 @@ fun main() {
                     environment = environment,
                     wellKnownInternalAzureAD = wellKnownInternalAzureAD,
                     database = applicationDatabase,
-                    veilederTilgangskontrollClient = veilederTilgangskontrollClient,
+                    tilgangskontrollClient = tilgangskontrollClient,
                     foresporselService = foresporselService,
                 )
                 monitor.subscribe(ApplicationStarted) {
