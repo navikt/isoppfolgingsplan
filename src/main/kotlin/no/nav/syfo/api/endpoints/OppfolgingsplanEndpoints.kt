@@ -30,7 +30,7 @@ fun Route.registerOppfolgingsplanEndpoints(
 
             checkVeilederTilgang(
                 action = "GET /foresporsler",
-                personident = personidentString,
+                personIdent = personidentString,
                 tilgangskontrollClient = tilgangskontrollClient,
             ) {
                 val foresporsler =
@@ -47,7 +47,7 @@ fun Route.registerOppfolgingsplanEndpoints(
 
             checkVeilederTilgang(
                 action = "POST /foresporsler",
-                personident = requestDTO.arbeidstakerPersonident,
+                personIdent = requestDTO.arbeidstakerPersonident,
                 tilgangskontrollClient = tilgangskontrollClient,
                 requiresWriteAccess = true,
             ) {
