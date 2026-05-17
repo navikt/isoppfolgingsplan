@@ -7,12 +7,12 @@ import io.ktor.client.request.*
 import io.ktor.http.*
 import net.logstash.logback.argument.StructuredArguments
 import no.nav.syfo.domain.Virksomhetsnummer
-import no.nav.syfo.infrastructure.clients.httpClientDefault
+import no.nav.syfo.common.http.defaultHttpClient
 import org.slf4j.LoggerFactory
 
 class EregClient(
     baseUrl: String,
-    private val httpClient: HttpClient = httpClientDefault(),
+    private val httpClient: HttpClient = defaultHttpClient(),
 ) {
     private val eregOrganisasjonUrl: String = "$baseUrl/$EREG_PATH"
 

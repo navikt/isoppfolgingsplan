@@ -13,7 +13,7 @@ import no.nav.syfo.infrastructure.clients.azuread.AzureAdClient
 import no.nav.syfo.infrastructure.bearerHeader
 import no.nav.syfo.infrastructure.clients.dokarkiv.dto.JournalpostRequest
 import no.nav.syfo.infrastructure.clients.dokarkiv.dto.JournalpostResponse
-import no.nav.syfo.infrastructure.clients.httpClientDefault
+import no.nav.syfo.common.http.defaultHttpClient
 import no.nav.syfo.infrastructure.metric.METRICS_NS
 import no.nav.syfo.infrastructure.metric.METRICS_REGISTRY
 import org.slf4j.LoggerFactory
@@ -21,7 +21,7 @@ import org.slf4j.LoggerFactory
 class DokarkivClient(
     private val azureAdClient: AzureAdClient,
     private val dokarkivEnvironment: ClientEnvironment,
-    private val httpClient: HttpClient = httpClientDefault(),
+    private val httpClient: HttpClient = defaultHttpClient(),
 ) {
     private val journalpostUrl: String = "${dokarkivEnvironment.baseUrl}$JOURNALPOST_PATH"
 

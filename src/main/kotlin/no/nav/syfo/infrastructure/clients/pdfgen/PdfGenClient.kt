@@ -9,14 +9,14 @@ import io.ktor.http.*
 import io.micrometer.core.instrument.Counter
 import net.logstash.logback.argument.StructuredArguments
 import no.nav.syfo.infrastructure.NAV_CALL_ID_HEADER
-import no.nav.syfo.infrastructure.clients.httpClientDefault
+import no.nav.syfo.common.http.defaultHttpClient
 import no.nav.syfo.infrastructure.metric.METRICS_NS
 import no.nav.syfo.infrastructure.metric.METRICS_REGISTRY
 import org.slf4j.LoggerFactory
 import java.util.*
 
 class PdfGenClient(
-    private val httpClient: HttpClient = httpClientDefault(),
+    private val httpClient: HttpClient = defaultHttpClient(),
     private val pdfGenBaseUrl: String
 ) {
     suspend fun createForesporselPdf(payload: PdfModel.ForesporselPdfModel): ByteArray =

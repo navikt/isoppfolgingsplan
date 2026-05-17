@@ -7,12 +7,12 @@ import io.ktor.client.request.*
 import io.ktor.client.request.forms.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
-import no.nav.syfo.infrastructure.clients.httpClientProxy
+import no.nav.syfo.common.http.proxyHttpClient
 import org.slf4j.LoggerFactory
 
 class AzureAdClient(
     private val azureEnvironment: AzureEnvironment,
-    private val httpClient: HttpClient = httpClientProxy(),
+    private val httpClient: HttpClient = proxyHttpClient(),
 ) {
     suspend fun getOnBehalfOfToken(
         scopeClientId: String,
