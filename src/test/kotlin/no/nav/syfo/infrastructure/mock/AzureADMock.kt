@@ -2,7 +2,12 @@ package no.nav.syfo.infrastructure.mock
 
 import io.ktor.client.engine.mock.*
 import io.ktor.client.request.*
-import no.nav.syfo.infrastructure.clients.azuread.AzureAdTokenResponse
+
+private data class AzureAdTokenResponse(
+    val access_token: String,
+    val expires_in: Long,
+    val token_type: String,
+)
 
 fun MockRequestHandleScope.azureAdMockResponse(): HttpResponseData =
     respond(

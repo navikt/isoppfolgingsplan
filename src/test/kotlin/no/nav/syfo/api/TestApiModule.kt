@@ -6,7 +6,8 @@ import no.nav.syfo.application.ForesporselService
 import no.nav.syfo.infrastructure.clients.dokarkiv.DokarkivClient
 import no.nav.syfo.infrastructure.clients.ereg.EregClient
 import no.nav.syfo.infrastructure.clients.pdfgen.PdfGenClient
-import no.nav.syfo.infrastructure.clients.veiledertilgang.VeilederTilgangskontrollClient
+import no.nav.syfo.common.tilgangskontroll.client.TilgangskontrollClient
+import no.nav.syfo.common.tilgangskontroll.client.TilgangskontrollClientConfig
 import no.nav.syfo.infrastructure.database.repository.ForesporselRepository
 import no.nav.syfo.infrastructure.journalforing.JournalforingService
 
@@ -14,10 +15,14 @@ fun Application.testApiModule(externalMockEnvironment: ExternalMockEnvironment) 
     val database = externalMockEnvironment.database
     val varselProducer = externalMockEnvironment.varselProducer
 
-    val veilederTilgangskontrollClient =
-        VeilederTilgangskontrollClient(
+    val tilgangskontrollClient =
+        TilgangskontrollClient(
             azureAdClient = externalMockEnvironment.azureAdClient,
-            clientEnvironment = externalMockEnvironment.environment.clients.istilgangskontroll,
+            config =
+                TilgangskontrollClientConfig(
+                    baseUrl = externalMockEnvironment.environment.clients.istilgangskontroll.baseUrl,
+                    clientId = externalMockEnvironment.environment.clients.istilgangskontroll.clientId,
+                ),
             httpClient = externalMockEnvironment.mockHttpClient,
         )
     val dokarkivClient =
@@ -55,7 +60,7 @@ fun Application.testApiModule(externalMockEnvironment: ExternalMockEnvironment) 
         environment = externalMockEnvironment.environment,
         wellKnownInternalAzureAD = externalMockEnvironment.wellKnownInternalAzureAD,
         database = database,
-        veilederTilgangskontrollClient = veilederTilgangskontrollClient,
+        tilgangskontrollClient = tilgangskontrollClient,
         foresporselService = foresporselService,
     )
 }

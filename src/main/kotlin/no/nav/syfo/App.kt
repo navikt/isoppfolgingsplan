@@ -11,7 +11,8 @@ import no.nav.syfo.infrastructure.clients.azuread.AzureAdClient
 import no.nav.syfo.infrastructure.clients.dokarkiv.DokarkivClient
 import no.nav.syfo.infrastructure.clients.ereg.EregClient
 import no.nav.syfo.infrastructure.clients.pdfgen.PdfGenClient
-import no.nav.syfo.infrastructure.clients.veiledertilgang.VeilederTilgangskontrollClient
+import no.nav.syfo.common.tilgangskontroll.client.TilgangskontrollClient
+import no.nav.syfo.common.tilgangskontroll.client.TilgangskontrollClientConfig
 import no.nav.syfo.infrastructure.clients.wellknown.getWellKnown
 import no.nav.syfo.infrastructure.cronjob.launchCronjobs
 import no.nav.syfo.infrastructure.database.applicationDatabase
@@ -43,10 +44,19 @@ fun main() {
         AzureAdClient(
             azureEnvironment = environment.azure,
         )
-    val veilederTilgangskontrollClient =
-        VeilederTilgangskontrollClient(
-            azureAdClient = azureAdClient,
-            clientEnvironment = environment.clients.istilgangskontroll,
+    val tilgangskontrollClient =
+        TilgangskontrollClient(
+            oboTokenProvider = { scopeClientId, token ->
+                azureAdClient.getOnBehalfOfToken(
+                    scopeClientId,
+                    token
+                )?.accessToken
+            },
+            config =
+                TilgangskontrollClientConfig(
+                    baseUrl = environment.clients.istilgangskontroll.baseUrl,
+                    clientId = environment.clients.istilgangskontroll.clientId,
+                ),
         )
     val kafkaProducer =
         KafkaProducer<String, EsyfovarselHendelse>(
@@ -117,7 +127,7 @@ fun main() {
                     environment = environment,
                     wellKnownInternalAzureAD = wellKnownInternalAzureAD,
                     database = applicationDatabase,
-                    veilederTilgangskontrollClient = veilederTilgangskontrollClient,
+                    tilgangskontrollClient = tilgangskontrollClient,
                     foresporselService = foresporselService,
                 )
                 monitor.subscribe(ApplicationStarted) {
