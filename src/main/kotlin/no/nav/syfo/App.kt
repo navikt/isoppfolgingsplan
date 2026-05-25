@@ -27,6 +27,8 @@ import no.nav.syfo.infrastructure.kafka.identhendelse.IdenthendelseConsumer
 import no.nav.syfo.infrastructure.kafka.identhendelse.IdenthendelseService
 import no.nav.syfo.infrastructure.kafka.identhendelse.launchIdenthendelseConsumer
 import no.nav.syfo.infrastructure.kafka.kafkaAivenProducerConfig
+import no.nav.syfo.infrastructure.metric.METRICS_REGISTRY
+import io.micrometer.core.instrument.Metrics
 import org.apache.kafka.clients.producer.KafkaProducer
 import org.slf4j.LoggerFactory
 import java.util.concurrent.TimeUnit
@@ -35,6 +37,11 @@ fun main() {
     val applicationState = ApplicationState()
     val environment = Environment()
     val logger = LoggerFactory.getLogger("ktor.application")
+
+    // Wire METRICS_REGISTRY into Micrometer's global registry so that counters registered
+    // on Metrics.globalRegistry (e.g. by shared libraries like isyfo-backend-common) are
+    // also exposed at /internal/metrics and scraped by Prometheus.
+    Metrics.addRegistry(METRICS_REGISTRY)
 
     val wellKnownInternalAzureAD =
         getWellKnown(
