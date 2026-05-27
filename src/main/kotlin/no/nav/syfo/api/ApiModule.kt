@@ -23,8 +23,8 @@ import no.nav.syfo.api.endpoints.registerOppfolgingsplanEndpoints
 import no.nav.syfo.application.ForesporselService
 import no.nav.syfo.application.exception.ConflictException
 import no.nav.syfo.common.tilgangskontroll.ktor.VeilederTilgangForbiddenException
-import no.nav.syfo.infrastructure.NAV_CALL_ID_HEADER
 import no.nav.syfo.common.tilgangskontroll.client.TilgangskontrollClient
+import no.nav.syfo.common.util.NAV_CALL_ID_HEADER
 import no.nav.syfo.infrastructure.clients.wellknown.WellKnown
 import no.nav.syfo.infrastructure.database.DatabaseInterface
 import no.nav.syfo.infrastructure.metric.METRICS_REGISTRY

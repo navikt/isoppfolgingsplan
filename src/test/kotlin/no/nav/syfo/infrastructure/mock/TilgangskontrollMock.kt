@@ -6,7 +6,7 @@ import kotlinx.coroutines.runBlocking
 import no.nav.syfo.UserConstants.ARBEIDSTAKER_PERSONIDENT_VEILEDER_NO_ACCESS
 import no.nav.syfo.common.tilgangskontroll.client.TilgangskontrollClient.Companion.TILGANGSKONTROLL_BRUKERE_PATH
 import no.nav.syfo.common.tilgangskontroll.client.TilgangskontrollClient.Companion.TILGANGSKONTROLL_PERSON_PATH
-import no.nav.syfo.infrastructure.NAV_PERSONIDENT_HEADER
+import no.nav.syfo.common.util.NAV_PERSONIDENT_HEADER
 
 private data class TilgangResponse(
     val erGodkjent: Boolean,

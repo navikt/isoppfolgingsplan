@@ -10,9 +10,9 @@ import no.nav.syfo.application.ForesporselService
 import no.nav.syfo.domain.Personident
 import no.nav.syfo.domain.Veilederident
 import no.nav.syfo.domain.Virksomhetsnummer
-import no.nav.syfo.infrastructure.NAV_PERSONIDENT_HEADER
 import no.nav.syfo.common.tilgangskontroll.client.TilgangskontrollClient
 import no.nav.syfo.common.tilgangskontroll.ktor.checkVeilederTilgang
+import no.nav.syfo.common.util.NAV_PERSONIDENT_HEADER
 import no.nav.syfo.common.util.ktor.getNavIdent
 import no.nav.syfo.common.util.ktor.getPersonIdent
 

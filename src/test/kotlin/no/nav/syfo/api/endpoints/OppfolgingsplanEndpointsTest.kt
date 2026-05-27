@@ -21,10 +21,10 @@ import no.nav.syfo.UserConstants.VIRKSOMHETSNUMMER
 import no.nav.syfo.api.generateJWT
 import no.nav.syfo.api.model.*
 import no.nav.syfo.api.testApiModule
+import no.nav.syfo.common.util.NAV_PERSONIDENT_HEADER
 import no.nav.syfo.domain.Foresporsel
 import no.nav.syfo.domain.Personident
 import no.nav.syfo.generator.generateDocumentComponent
-import no.nav.syfo.infrastructure.NAV_PERSONIDENT_HEADER
 import no.nav.syfo.infrastructure.database.dropData
 import no.nav.syfo.util.configure
 import org.junit.jupiter.api.Assertions.assertEquals
