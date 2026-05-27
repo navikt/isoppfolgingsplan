@@ -19,14 +19,15 @@ import no.nav.syfo.UserConstants.OTHER_VIRKSOMHETSNUMMER
 import no.nav.syfo.UserConstants.VEILEDER_IDENT
 import no.nav.syfo.UserConstants.VIRKSOMHETSNUMMER
 import no.nav.syfo.api.generateJWT
-import no.nav.syfo.api.model.*
+import no.nav.syfo.api.model.ForesporselRequestDTO
+import no.nav.syfo.api.model.ForesporselResponseDTO
 import no.nav.syfo.api.testApiModule
 import no.nav.syfo.common.util.NAV_PERSONIDENT_HEADER
+import no.nav.syfo.common.util.applyCommonJacksonConfig
 import no.nav.syfo.domain.Foresporsel
 import no.nav.syfo.domain.Personident
 import no.nav.syfo.generator.generateDocumentComponent
 import no.nav.syfo.infrastructure.database.dropData
-import no.nav.syfo.common.util.applyCommonJacksonConfig
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
