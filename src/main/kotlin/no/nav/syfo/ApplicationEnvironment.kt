@@ -1,9 +1,9 @@
 package no.nav.syfo
 
+import no.nav.syfo.common.token.azuread.AzureAdClientConfig
 import no.nav.syfo.common.util.ClientConfig
 import no.nav.syfo.common.util.OpenClientConfig
 import no.nav.syfo.infrastructure.clients.ClientsConfig
-import no.nav.syfo.infrastructure.clients.azuread.AzureEnvironment
 import no.nav.syfo.infrastructure.database.DatabaseEnvironment
 import no.nav.syfo.infrastructure.kafka.KafkaEnvironment
 
@@ -30,8 +30,8 @@ data class Environment(
             aivenRegistryUser = getEnvVar("KAFKA_SCHEMA_REGISTRY_USER"),
             aivenRegistryPassword = getEnvVar("KAFKA_SCHEMA_REGISTRY_PASSWORD"),
         ),
-    val azure: AzureEnvironment =
-        AzureEnvironment(
+    val azure: AzureAdClientConfig =
+        AzureAdClientConfig(
             appClientId = getEnvVar("AZURE_APP_CLIENT_ID"),
             appClientSecret = getEnvVar("AZURE_APP_CLIENT_SECRET"),
             appWellKnownUrl = getEnvVar("AZURE_APP_WELL_KNOWN_URL"),

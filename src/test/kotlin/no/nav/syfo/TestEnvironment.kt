@@ -1,9 +1,9 @@
 package no.nav.syfo
 
+import no.nav.syfo.common.token.azuread.AzureAdClientConfig
 import no.nav.syfo.common.util.ClientConfig
 import no.nav.syfo.common.util.OpenClientConfig
 import no.nav.syfo.infrastructure.clients.ClientsConfig
-import no.nav.syfo.infrastructure.clients.azuread.AzureEnvironment
 import no.nav.syfo.infrastructure.database.DatabaseEnvironment
 import no.nav.syfo.infrastructure.kafka.KafkaEnvironment
 
@@ -30,7 +30,7 @@ fun testEnvironment() =
                 aivenRegistryPassword = "registrypassword",
             ),
         azure =
-            AzureEnvironment(
+            AzureAdClientConfig(
                 appClientId = "isoppfolgingsplan-client-id",
                 appClientSecret = "isoppfolgingsplan-secret",
                 appWellKnownUrl = "wellknown",

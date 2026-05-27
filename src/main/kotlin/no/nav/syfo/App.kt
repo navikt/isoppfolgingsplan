@@ -10,8 +10,8 @@ import no.nav.syfo.api.apiModule
 import no.nav.syfo.application.ForesporselService
 import no.nav.syfo.common.auth.getWellKnown
 import no.nav.syfo.common.tilgangskontroll.client.TilgangskontrollClient
+import no.nav.syfo.common.token.azuread.AzureAdClient
 import no.nav.syfo.common.util.ClientConfig
-import no.nav.syfo.infrastructure.clients.azuread.AzureAdClient
 import no.nav.syfo.infrastructure.clients.dokarkiv.DokarkivClient
 import no.nav.syfo.infrastructure.clients.ereg.EregClient
 import no.nav.syfo.infrastructure.clients.pdfgen.PdfGenClient
@@ -47,18 +47,10 @@ fun main() {
         getWellKnown(
             wellKnownUrl = environment.azure.appWellKnownUrl,
         )
-    val azureAdClient =
-        AzureAdClient(
-            azureEnvironment = environment.azure,
-        )
+    val azureAdClient = AzureAdClient()
     val tilgangskontrollClient =
         TilgangskontrollClient(
-            oboTokenProvider = { scopeClientId, token ->
-                azureAdClient.getOnBehalfOfToken(
-                    scopeClientId,
-                    token
-                )?.accessToken
-            },
+            oboTokenProvider = azureAdClient,
             clientConfig =
                 ClientConfig(
                     baseUrl = environment.clients.istilgangskontroll.baseUrl,
@@ -81,7 +73,7 @@ fun main() {
         )
     val dokarkivClient =
         DokarkivClient(
-            azureAdClient = azureAdClient,
+            systemTokenProvider = azureAdClient,
             clientConfig = environment.clients.dokarkiv,
         )
     val pdfClient =

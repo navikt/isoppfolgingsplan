@@ -17,12 +17,7 @@ fun Application.testApiModule(externalMockEnvironment: ExternalMockEnvironment) 
 
     val tilgangskontrollClient =
         TilgangskontrollClient(
-            oboTokenProvider = { scopeClientId, token ->
-                externalMockEnvironment.azureAdClient.getOnBehalfOfToken(
-                    scopeClientId,
-                    token
-                )?.accessToken
-            },
+            oboTokenProvider = externalMockEnvironment.azureAdClient,
             clientConfig =
                 ClientConfig(
                     baseUrl = externalMockEnvironment.environment.clients.istilgangskontroll.baseUrl,
@@ -32,7 +27,7 @@ fun Application.testApiModule(externalMockEnvironment: ExternalMockEnvironment) 
         )
     val dokarkivClient =
         DokarkivClient(
-            azureAdClient = externalMockEnvironment.azureAdClient,
+            systemTokenProvider = externalMockEnvironment.azureAdClient,
             clientConfig = externalMockEnvironment.environment.clients.dokarkiv,
             httpClient = externalMockEnvironment.mockHttpClient,
         )
