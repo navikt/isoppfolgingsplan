@@ -45,7 +45,7 @@ class ExternalMockEnvironment private constructor() {
     val dokarkivClient =
         DokarkivClient(
             azureAdClient = azureAdClient,
-            dokarkivEnvironment = environment.clients.dokarkiv,
+            clientConfig = environment.clients.dokarkiv,
             httpClient = mockHttpClient,
         )
     val varselProducer = mockk<IVarselProducer>(relaxed = true)

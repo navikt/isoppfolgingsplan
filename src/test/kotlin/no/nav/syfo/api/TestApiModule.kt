@@ -7,7 +7,7 @@ import no.nav.syfo.infrastructure.clients.dokarkiv.DokarkivClient
 import no.nav.syfo.infrastructure.clients.ereg.EregClient
 import no.nav.syfo.infrastructure.clients.pdfgen.PdfGenClient
 import no.nav.syfo.common.tilgangskontroll.client.TilgangskontrollClient
-import no.nav.syfo.common.tilgangskontroll.client.TilgangskontrollClientConfig
+import no.nav.syfo.common.util.ClientConfig
 import no.nav.syfo.infrastructure.database.repository.ForesporselRepository
 import no.nav.syfo.infrastructure.journalforing.JournalforingService
 
@@ -17,9 +17,14 @@ fun Application.testApiModule(externalMockEnvironment: ExternalMockEnvironment) 
 
     val tilgangskontrollClient =
         TilgangskontrollClient(
-            azureAdClient = externalMockEnvironment.azureAdClient,
-            config =
-                TilgangskontrollClientConfig(
+            oboTokenProvider = { scopeClientId, token ->
+                externalMockEnvironment.azureAdClient.getOnBehalfOfToken(
+                    scopeClientId,
+                    token
+                )?.accessToken
+            },
+            clientConfig =
+                ClientConfig(
                     baseUrl = externalMockEnvironment.environment.clients.istilgangskontroll.baseUrl,
                     clientId = externalMockEnvironment.environment.clients.istilgangskontroll.clientId,
                 ),
@@ -28,7 +33,7 @@ fun Application.testApiModule(externalMockEnvironment: ExternalMockEnvironment) 
     val dokarkivClient =
         DokarkivClient(
             azureAdClient = externalMockEnvironment.azureAdClient,
-            dokarkivEnvironment = externalMockEnvironment.environment.clients.dokarkiv,
+            clientConfig = externalMockEnvironment.environment.clients.dokarkiv,
             httpClient = externalMockEnvironment.mockHttpClient,
         )
     val eregClient =

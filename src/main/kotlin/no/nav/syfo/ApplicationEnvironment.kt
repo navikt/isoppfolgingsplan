@@ -1,8 +1,8 @@
 package no.nav.syfo
 
-import no.nav.syfo.infrastructure.clients.ClientEnvironment
-import no.nav.syfo.infrastructure.clients.ClientsEnvironment
-import no.nav.syfo.infrastructure.clients.OpenClientEnvironment
+import no.nav.syfo.common.util.ClientConfig
+import no.nav.syfo.common.util.OpenClientConfig
+import no.nav.syfo.infrastructure.clients.ClientsConfig
 import no.nav.syfo.infrastructure.clients.azuread.AzureEnvironment
 import no.nav.syfo.infrastructure.database.DatabaseEnvironment
 import no.nav.syfo.infrastructure.kafka.KafkaEnvironment
@@ -38,24 +38,24 @@ data class Environment(
             openidConfigTokenEndpoint = getEnvVar("AZURE_OPENID_CONFIG_TOKEN_ENDPOINT"),
         ),
     val electorPath: String = getEnvVar("ELECTOR_PATH"),
-    val clients: ClientsEnvironment =
-        ClientsEnvironment(
+    val clients: ClientsConfig =
+        ClientsConfig(
             istilgangskontroll =
-                ClientEnvironment(
+                ClientConfig(
                     baseUrl = getEnvVar("ISTILGANGSKONTROLL_URL"),
                     clientId = getEnvVar("ISTILGANGSKONTROLL_CLIENT_ID"),
                 ),
             dokarkiv =
-                ClientEnvironment(
+                ClientConfig(
                     baseUrl = getEnvVar("DOKARKIV_URL"),
                     clientId = getEnvVar("DOKARKIV_CLIENT_ID")
                 ),
             ereg =
-                OpenClientEnvironment(
+                OpenClientConfig(
                     baseUrl = getEnvVar("EREG_URL"),
                 ),
             ispdfgen =
-                OpenClientEnvironment(
+                OpenClientConfig(
                     baseUrl = "http://ispdfgen"
                 ),
         ),
