@@ -11,7 +11,7 @@ import no.nav.syfo.domain.Personident
 import no.nav.syfo.domain.Veilederident
 import no.nav.syfo.domain.Virksomhetsnummer
 import no.nav.syfo.common.tilgangskontroll.client.TilgangskontrollClient
-import no.nav.syfo.common.tilgangskontroll.ktor.checkVeilederTilgang
+import no.nav.syfo.common.tilgangskontroll.ktor.checkVeilederTilgangToPerson
 import no.nav.syfo.common.util.NAV_PERSONIDENT_HEADER
 import no.nav.syfo.common.util.ktor.getNavIdent
 import no.nav.syfo.common.util.ktor.getPersonIdent
@@ -28,7 +28,7 @@ fun Route.registerOppfolgingsplanEndpoints(
                         "Failed to access foresporsel for person: No $NAV_PERSONIDENT_HEADER supplied in request header"
                     )
 
-            checkVeilederTilgang(
+            checkVeilederTilgangToPerson(
                 action = "GET /foresporsler",
                 personIdent = personidentString,
                 tilgangskontrollClient = tilgangskontrollClient,
@@ -45,7 +45,7 @@ fun Route.registerOppfolgingsplanEndpoints(
         post("/foresporsler") {
             val requestDTO = call.receive<ForesporselRequestDTO>()
 
-            checkVeilederTilgang(
+            checkVeilederTilgangToPerson(
                 action = "POST /foresporsler",
                 personIdent = requestDTO.arbeidstakerPersonident,
                 tilgangskontrollClient = tilgangskontrollClient,

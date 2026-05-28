@@ -24,7 +24,7 @@ import no.nav.syfo.common.auth.JwtIssuerType
 import no.nav.syfo.common.auth.WellKnown
 import no.nav.syfo.common.auth.installJwtAuthentication
 import no.nav.syfo.common.tilgangskontroll.client.TilgangskontrollClient
-import no.nav.syfo.common.tilgangskontroll.ktor.VeilederTilgangForbiddenException
+import no.nav.syfo.common.tilgangskontroll.VeilederTilgangForbiddenException
 import no.nav.syfo.common.util.NAV_CALL_ID_HEADER
 import no.nav.syfo.common.util.applyCommonJacksonConfig
 import no.nav.syfo.common.util.ktor.getCallId
