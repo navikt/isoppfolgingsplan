@@ -3,6 +3,8 @@ import com.adarshr.gradle.testlogger.theme.ThemeType
 group = "no.nav.syfo"
 version = "0.0.1"
 
+val isyfoBackendCommonVersion = "0.0.37"
+
 val confluentVersion = "8.2.1"
 val flywayVersion = "11.20.3"
 val hikariVersion = "7.0.2"
@@ -47,7 +49,7 @@ dependencies {
     implementation(kotlin("stdlib"))
     implementation(kotlin("reflect"))
 
-    implementation("no.nav.syfo:isyfo-backend-common:0.0.31")
+    implementation("no.nav.syfo:isyfo-backend-common:$isyfoBackendCommonVersion")
 
     implementation("io.ktor:ktor-client-apache5:$ktorVersion")
     implementation("io.ktor:ktor-client-content-negotiation:$ktorVersion")
@@ -91,6 +93,7 @@ dependencies {
     implementation("io.confluent:kafka-avro-serializer:$confluentVersion")
 
     // Tests
+    testImplementation(testFixtures("no.nav.syfo:isyfo-backend-common:$isyfoBackendCommonVersion"))
     testImplementation(kotlin("test"))
     testImplementation("io.ktor:ktor-server-test-host:$ktorVersion")
     testImplementation("io.mockk:mockk:$mockkVersion")

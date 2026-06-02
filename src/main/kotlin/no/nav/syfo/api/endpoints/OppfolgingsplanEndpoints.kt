@@ -11,10 +11,9 @@ import no.nav.syfo.domain.Personident
 import no.nav.syfo.domain.Veilederident
 import no.nav.syfo.domain.Virksomhetsnummer
 import no.nav.syfo.common.tilgangskontroll.client.TilgangskontrollClient
-import no.nav.syfo.common.tilgangskontroll.ktor.checkVeilederTilgangToPerson
-import no.nav.syfo.common.util.NAV_PERSONIDENT_HEADER
-import no.nav.syfo.common.util.ktor.getNavIdent
-import no.nav.syfo.common.util.ktor.getPersonIdent
+import no.nav.syfo.common.tilgangskontroll.ktor.checkPersonAndSyfoTilgang
+import no.nav.syfo.common.util.ktor.navIdent
+import no.nav.syfo.common.util.ktor.personIdent
 
 fun Route.registerOppfolgingsplanEndpoints(
     tilgangskontrollClient: TilgangskontrollClient,
@@ -22,20 +21,15 @@ fun Route.registerOppfolgingsplanEndpoints(
 ) {
     route("/api/internad/v1/oppfolgingsplan") {
         get("/foresporsler") {
-            val personidentString =
-                call.getPersonIdent()
-                    ?: throw IllegalArgumentException(
-                        "Failed to access foresporsel for person: No $NAV_PERSONIDENT_HEADER supplied in request header"
-                    )
-
-            checkVeilederTilgangToPerson(
+            checkPersonAndSyfoTilgang(
                 action = "GET /foresporsler",
-                personIdent = personidentString,
                 tilgangskontrollClient = tilgangskontrollClient,
             ) {
+                val personident = Personident(call.personIdent)
+
                 val foresporsler =
                     foresporselService.getForesporsler(
-                        personident = Personident(personidentString),
+                        personident = personident,
                     )
                 val responseDTO = foresporsler.map { ForesporselResponseDTO.fromForesporsel(it) }
                 call.respond(HttpStatusCode.OK, responseDTO)
@@ -44,17 +38,18 @@ fun Route.registerOppfolgingsplanEndpoints(
 
         post("/foresporsler") {
             val requestDTO = call.receive<ForesporselRequestDTO>()
+            val personident = Personident(requestDTO.arbeidstakerPersonident)
 
-            checkVeilederTilgangToPerson(
+            checkPersonAndSyfoTilgang(
                 action = "POST /foresporsler",
-                personIdent = requestDTO.arbeidstakerPersonident,
+                personIdent = personident.value,
                 tilgangskontrollClient = tilgangskontrollClient,
                 requiresWriteAccess = true,
             ) {
                 val result =
                     foresporselService.createForesporsel(
-                        arbeidstakerPersonident = Personident(requestDTO.arbeidstakerPersonident),
-                        veilederident = Veilederident(call.getNavIdent()),
+                        arbeidstakerPersonident = personident,
+                        veilederident = Veilederident(call.navIdent),
                         virksomhetsnummer = Virksomhetsnummer(requestDTO.virksomhetsnummer),
                         narmestelederPersonident = Personident(requestDTO.narmestelederPersonident),
                         document = requestDTO.document,
