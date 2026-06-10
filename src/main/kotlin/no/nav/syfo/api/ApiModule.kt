@@ -27,8 +27,7 @@ import no.nav.syfo.common.tilgangskontroll.client.TilgangskontrollClient
 import no.nav.syfo.common.tilgangskontroll.TilgangDeniedException
 import no.nav.syfo.common.util.NAV_CALL_ID_HEADER
 import no.nav.syfo.common.util.applyCommonJacksonConfig
-import no.nav.syfo.common.util.ktor.callId
-import no.nav.syfo.common.util.ktor.consumerClientId
+import no.nav.syfo.common.util.consumerClientId
 import no.nav.syfo.infrastructure.database.DatabaseInterface
 import no.nav.syfo.infrastructure.metric.METRICS_REGISTRY
 import java.time.Duration

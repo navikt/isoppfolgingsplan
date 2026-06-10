@@ -17,6 +17,7 @@ import no.nav.syfo.UserConstants.NARMESTELEDER_FNR
 import no.nav.syfo.UserConstants.OTHER_NARMESTELEDER_FNR
 import no.nav.syfo.UserConstants.OTHER_VIRKSOMHETSNUMMER
 import no.nav.syfo.UserConstants.VEILEDER_IDENT
+import no.nav.syfo.UserConstants.VEILEDER_IDENT_READ_ACCESS
 import no.nav.syfo.UserConstants.VIRKSOMHETSNUMMER
 import no.nav.syfo.api.generateJWT
 import no.nav.syfo.api.model.ForesporselRequestDTO
@@ -58,6 +59,12 @@ object OppfolgingsplanEndpointsTest {
             audience = externalMockEnvironment.environment.azure.appClientId,
             issuer = externalMockEnvironment.wellKnownInternalAzureAD.issuer,
             navIdent = VEILEDER_IDENT.value,
+        )
+    private val validTokenReadAccess =
+        generateJWT(
+            audience = externalMockEnvironment.environment.azure.appClientId,
+            issuer = externalMockEnvironment.wellKnownInternalAzureAD.issuer,
+            navIdent = VEILEDER_IDENT_READ_ACCESS.value,
         )
 
     @BeforeEach
@@ -176,6 +183,37 @@ object OppfolgingsplanEndpointsTest {
                 client.post("$URL_OPPFOLGINGSPLAN/foresporsler") {
                     contentType(ContentType.Application.Json)
                     bearerAuth(validToken)
+                    setBody(foresporselRequestDTO)
+                }
+            assertEquals(HttpStatusCode.Forbidden, response.status)
+        }
+    }
+
+    @Test
+    fun `Returns OK when veileder with read access gets foresporsler`() {
+        testApplication {
+            val client = setupApiAndClient()
+
+            val response =
+                client.get("$URL_OPPFOLGINGSPLAN/foresporsler") {
+                    bearerAuth(validTokenReadAccess)
+                    header(NAV_PERSONIDENT_HEADER, ARBEIDSTAKER_PERSONIDENT.value)
+                }
+            assertEquals(HttpStatusCode.OK, response.status)
+            val responseBody = response.body<List<ForesporselResponseDTO>>()
+            assertEquals(emptyList<ForesporselResponseDTO>(), responseBody)
+        }
+    }
+
+    @Test
+    fun `Returns status Forbidden when veileder with read access tries to create foresporsel`() {
+        testApplication {
+            val client = setupApiAndClient()
+            val foresporselRequestDTO = createForesporselRequestDTO()
+            val response =
+                client.post("$URL_OPPFOLGINGSPLAN/foresporsler") {
+                    contentType(ContentType.Application.Json)
+                    bearerAuth(validTokenReadAccess)
                     setBody(foresporselRequestDTO)
                 }
             assertEquals(HttpStatusCode.Forbidden, response.status)
