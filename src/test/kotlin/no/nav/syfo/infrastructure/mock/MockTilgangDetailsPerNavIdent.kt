@@ -3,25 +3,25 @@ package no.nav.syfo.infrastructure.mock
 import no.nav.syfo.UserConstants
 import no.nav.syfo.common.mock.tilgangskontroll.MockUserSyfoTilgangLevel
 import no.nav.syfo.common.mock.tilgangskontroll.MockUserTilgangDetails
-import no.nav.syfo.common.types.ident.NavIdent
-import no.nav.syfo.common.types.ident.PersonIdent
+import no.nav.syfo.common.types.ident.Navident
+import no.nav.syfo.common.types.ident.Personident
 
 val mockTilgangDetailsPerNavIdent =
     mapOf(
-        NavIdent(UserConstants.VEILEDER_IDENT.value) to
+        Navident(UserConstants.VEILEDER_IDENT.value) to
             MockUserTilgangDetails(
                 syfoTilgangLevel = MockUserSyfoTilgangLevel.FULL,
                 personsUserHasAccessTo =
                     setOf(
-                        PersonIdent(UserConstants.ARBEIDSTAKER_PERSONIDENT.value),
+                        Personident(UserConstants.ARBEIDSTAKER_PERSONIDENT.value),
                     )
             ),
-        NavIdent(UserConstants.VEILEDER_IDENT_READ_ACCESS.value) to
+        Navident(UserConstants.VEILEDER_IDENT_READ_ACCESS.value) to
             MockUserTilgangDetails(
                 syfoTilgangLevel = MockUserSyfoTilgangLevel.READ,
                 personsUserHasAccessTo =
                     setOf(
-                        PersonIdent(UserConstants.ARBEIDSTAKER_PERSONIDENT.value),
+                        Personident(UserConstants.ARBEIDSTAKER_PERSONIDENT.value),
                     )
             )
     )

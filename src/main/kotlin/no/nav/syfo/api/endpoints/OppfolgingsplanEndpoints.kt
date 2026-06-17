@@ -8,11 +8,11 @@ import no.nav.syfo.api.model.ForesporselRequestDTO
 import no.nav.syfo.api.model.ForesporselResponseDTO
 import no.nav.syfo.application.ForesporselService
 import no.nav.syfo.common.tilgangskontroll.checkPersonAndSyfoTilgang
+import no.nav.syfo.common.tilgangskontroll.client.TilgangskontrollClient
 import no.nav.syfo.domain.Personident
 import no.nav.syfo.domain.Veilederident
 import no.nav.syfo.domain.Virksomhetsnummer
-import no.nav.syfo.common.tilgangskontroll.client.TilgangskontrollClient
-import no.nav.syfo.common.types.ident.PersonIdent
+import no.nav.syfo.common.types.ident.Personident as CommonPersonident
 
 fun Route.registerOppfolgingsplanEndpoints(
     tilgangskontrollClient: TilgangskontrollClient,
@@ -39,14 +39,14 @@ fun Route.registerOppfolgingsplanEndpoints(
 
             checkPersonAndSyfoTilgang(
                 action = "POST /foresporsler",
-                personIdent = PersonIdent(personidentFromBody),
+                personident = CommonPersonident(personidentFromBody),
                 tilgangskontrollClient = tilgangskontrollClient,
                 requiresWriteAccess = true,
             ) { authorizedUser, targetPersonIdent, _ ->
                 val result =
                     foresporselService.createForesporsel(
                         arbeidstakerPersonident = Personident(targetPersonIdent.value),
-                        veilederident = Veilederident(authorizedUser.navIdent.value),
+                        veilederident = Veilederident(authorizedUser.navident.value),
                         virksomhetsnummer = Virksomhetsnummer(requestDTO.virksomhetsnummer),
                         narmestelederPersonident = Personident(requestDTO.narmestelederPersonident),
                         document = requestDTO.document,
