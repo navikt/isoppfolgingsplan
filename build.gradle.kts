@@ -32,13 +32,8 @@ repositories {
     mavenCentral()
     maven(url = "https://packages.confluent.io/maven/")
     maven {
-        url = uri("https://maven.pkg.github.com/navikt/isyfo-backend-common")
-        credentials {
-            username = providers.gradleProperty("githubUser").getOrElse("")
-            password = providers.gradleProperty("githubPassword").orNull
-        }
+        url = uri("https://github-package-registry-mirror.gc.nav.no/cached/maven-release")
     }
-    mavenLocal()
 }
 
 configurations.all {
