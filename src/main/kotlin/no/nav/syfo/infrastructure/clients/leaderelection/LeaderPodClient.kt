@@ -3,7 +3,7 @@ package no.nav.syfo.infrastructure.clients.leaderelection
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import io.ktor.client.*
-import io.ktor.client.engine.apache5.*
+import io.ktor.client.engine.apache.Apache
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
@@ -16,7 +16,7 @@ class LeaderPodClient(
     private val electorPath: String,
 ) {
     private val httpClient =
-        HttpClient(Apache5) {
+        HttpClient(Apache) {
             expectSuccess = true
         }
 
