@@ -14,23 +14,22 @@ import io.ktor.server.routing.*
 import io.micrometer.core.instrument.distribution.DistributionStatisticConfig
 import no.nav.syfo.ApplicationState
 import no.nav.syfo.Environment
-import no.nav.syfo.api.auth.JwtIssuer
-import no.nav.syfo.api.auth.JwtIssuerType
-import no.nav.syfo.api.auth.installJwtAuthentication
 import no.nav.syfo.api.endpoints.metricEndpoints
 import no.nav.syfo.api.endpoints.podEndpoints
 import no.nav.syfo.api.endpoints.registerOppfolgingsplanEndpoints
 import no.nav.syfo.application.ForesporselService
 import no.nav.syfo.application.exception.ConflictException
-import no.nav.syfo.application.exception.ForbiddenAccessVeilederException
-import no.nav.syfo.infrastructure.NAV_CALL_ID_HEADER
-import no.nav.syfo.infrastructure.clients.veiledertilgang.VeilederTilgangskontrollClient
-import no.nav.syfo.infrastructure.clients.wellknown.WellKnown
+import no.nav.syfo.common.auth.JwtIssuer
+import no.nav.syfo.common.auth.JwtIssuerType
+import no.nav.syfo.common.auth.WellKnown
+import no.nav.syfo.common.auth.installJwtAuthentication
+import no.nav.syfo.common.tilgangskontroll.client.TilgangskontrollClient
+import no.nav.syfo.common.tilgangskontroll.TilgangDeniedException
+import no.nav.syfo.common.util.NAV_CALL_ID_HEADER
+import no.nav.syfo.common.util.applyCommonJacksonConfig
+import no.nav.syfo.common.util.consumerClientId
 import no.nav.syfo.infrastructure.database.DatabaseInterface
 import no.nav.syfo.infrastructure.metric.METRICS_REGISTRY
-import no.nav.syfo.util.configure
-import no.nav.syfo.util.getCallId
-import no.nav.syfo.util.getConsumerClientId
 import java.time.Duration
 import java.util.*
 
@@ -39,7 +38,7 @@ fun Application.apiModule(
     environment: Environment,
     wellKnownInternalAzureAD: WellKnown,
     database: DatabaseInterface,
-    veilederTilgangskontrollClient: VeilederTilgangskontrollClient,
+    tilgangskontrollClient: TilgangskontrollClient,
     foresporselService: ForesporselService,
 ) {
     installMetrics()
@@ -62,7 +61,7 @@ fun Application.apiModule(
         metricEndpoints()
         authenticate(JwtIssuerType.INTERNAL_AZUREAD.name) {
             registerOppfolgingsplanEndpoints(
-                veilederTilgangskontrollClient = veilederTilgangskontrollClient,
+                tilgangskontrollClient = tilgangskontrollClient,
                 foresporselService = foresporselService,
             )
         }
@@ -71,7 +70,7 @@ fun Application.apiModule(
 
 fun Application.installContentNegotiation() {
     install(ContentNegotiation) {
-        jackson { configure() }
+        jackson { applyCommonJacksonConfig() }
     }
 }
 
@@ -98,12 +97,12 @@ fun Application.installCallId() {
 fun Application.installStatusPages() {
     install(StatusPages) {
         exception<Throwable> { call, cause ->
-            val callId = call.getCallId()
-            val consumerClientId = call.getConsumerClientId()
+            val callId = call.callId
+            val consumerClientId = call.consumerClientId
             val logExceptionMessage = "Caught exception, callId=$callId, consumerClientId=$consumerClientId"
             val log = call.application.log
             when (cause) {
-                is ForbiddenAccessVeilederException -> {
+                is TilgangDeniedException -> {
                     log.warn(logExceptionMessage, cause)
                 }
 
@@ -124,7 +123,7 @@ fun Application.installStatusPages() {
                         HttpStatusCode.BadRequest
                     }
 
-                    is ForbiddenAccessVeilederException -> {
+                    is TilgangDeniedException -> {
                         HttpStatusCode.Forbidden
                     }
                     is ConflictException -> {

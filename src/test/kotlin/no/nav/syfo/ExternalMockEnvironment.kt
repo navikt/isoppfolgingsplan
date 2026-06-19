@@ -2,11 +2,11 @@ package no.nav.syfo
 
 import io.mockk.mockk
 import no.nav.syfo.application.IVarselProducer
-import no.nav.syfo.infrastructure.clients.azuread.AzureAdClient
+import no.nav.syfo.common.auth.WellKnown
+import no.nav.syfo.common.token.azuread.AzureAdClient
 import no.nav.syfo.infrastructure.clients.dokarkiv.DokarkivClient
 import no.nav.syfo.infrastructure.clients.ereg.EregClient
 import no.nav.syfo.infrastructure.clients.pdfgen.PdfGenClient
-import no.nav.syfo.infrastructure.clients.wellknown.WellKnown
 import no.nav.syfo.infrastructure.database.TestDatabase
 import no.nav.syfo.infrastructure.database.repository.ForesporselRepository
 import no.nav.syfo.infrastructure.mock.mockHttpClient
@@ -29,7 +29,7 @@ class ExternalMockEnvironment private constructor() {
     val wellKnownInternalAzureAD = wellKnownInternalAzureAD()
     val azureAdClient =
         AzureAdClient(
-            azureEnvironment = environment.azure,
+            config = environment.azure,
             httpClient = mockHttpClient,
         )
     val eregClient =
@@ -44,8 +44,8 @@ class ExternalMockEnvironment private constructor() {
         )
     val dokarkivClient =
         DokarkivClient(
-            azureAdClient = azureAdClient,
-            dokarkivEnvironment = environment.clients.dokarkiv,
+            systemTokenProvider = azureAdClient,
+            clientConfig = environment.clients.dokarkiv,
             httpClient = mockHttpClient,
         )
     val varselProducer = mockk<IVarselProducer>(relaxed = true)

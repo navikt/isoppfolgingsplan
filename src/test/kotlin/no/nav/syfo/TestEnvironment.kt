@@ -1,9 +1,9 @@
 package no.nav.syfo
 
-import no.nav.syfo.infrastructure.clients.ClientEnvironment
-import no.nav.syfo.infrastructure.clients.ClientsEnvironment
-import no.nav.syfo.infrastructure.clients.OpenClientEnvironment
-import no.nav.syfo.infrastructure.clients.azuread.AzureEnvironment
+import no.nav.syfo.common.token.azuread.AzureAdClientConfig
+import no.nav.syfo.common.util.ClientConfig
+import no.nav.syfo.common.util.OpenClientConfig
+import no.nav.syfo.infrastructure.clients.ClientsConfig
 import no.nav.syfo.infrastructure.database.DatabaseEnvironment
 import no.nav.syfo.infrastructure.kafka.KafkaEnvironment
 
@@ -30,30 +30,30 @@ fun testEnvironment() =
                 aivenRegistryPassword = "registrypassword",
             ),
         azure =
-            AzureEnvironment(
+            AzureAdClientConfig(
                 appClientId = "isoppfolgingsplan-client-id",
                 appClientSecret = "isoppfolgingsplan-secret",
                 appWellKnownUrl = "wellknown",
                 openidConfigTokenEndpoint = "azureOpenIdTokenEndpoint",
             ),
         clients =
-            ClientsEnvironment(
+            ClientsConfig(
                 istilgangskontroll =
-                    ClientEnvironment(
+                    ClientConfig(
                         baseUrl = "isTilgangskontrollUrl",
                         clientId = "dev-gcp.teamsykefravr.istilgangskontroll",
                     ),
                 dokarkiv =
-                    ClientEnvironment(
+                    ClientConfig(
                         baseUrl = "dokarkiv",
                         clientId = "dev-gcp.teamsykefravr.dokarkiv",
                     ),
                 ereg =
-                    OpenClientEnvironment(
+                    OpenClientConfig(
                         baseUrl = "ereg",
                     ),
                 ispdfgen =
-                    OpenClientEnvironment(
+                    OpenClientConfig(
                         baseUrl = "ispdfgen",
                     ),
             ),

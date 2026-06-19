@@ -15,6 +15,7 @@ object UserConstants {
     val NARMESTELEDER_FNR = Personident("98765432101")
     val OTHER_NARMESTELEDER_FNR = Personident("98765432102")
     val VEILEDER_IDENT = Veilederident("Z999999")
+    val VEILEDER_IDENT_READ_ACCESS = Veilederident("Z999998")
 
     const val VIRKSOMHETSNUMMER_2 = "123456781"
 

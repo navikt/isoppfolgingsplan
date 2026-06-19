@@ -5,14 +5,16 @@ import io.ktor.server.application.*
 import io.ktor.server.config.*
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
+import io.micrometer.core.instrument.Metrics
 import no.nav.syfo.api.apiModule
 import no.nav.syfo.application.ForesporselService
-import no.nav.syfo.infrastructure.clients.azuread.AzureAdClient
+import no.nav.syfo.common.auth.getWellKnown
+import no.nav.syfo.common.tilgangskontroll.client.TilgangskontrollClient
+import no.nav.syfo.common.token.azuread.AzureAdClient
+import no.nav.syfo.common.util.ClientConfig
 import no.nav.syfo.infrastructure.clients.dokarkiv.DokarkivClient
 import no.nav.syfo.infrastructure.clients.ereg.EregClient
 import no.nav.syfo.infrastructure.clients.pdfgen.PdfGenClient
-import no.nav.syfo.infrastructure.clients.veiledertilgang.VeilederTilgangskontrollClient
-import no.nav.syfo.infrastructure.clients.wellknown.getWellKnown
 import no.nav.syfo.infrastructure.cronjob.launchCronjobs
 import no.nav.syfo.infrastructure.database.applicationDatabase
 import no.nav.syfo.infrastructure.database.databaseModule
@@ -26,6 +28,7 @@ import no.nav.syfo.infrastructure.kafka.identhendelse.IdenthendelseConsumer
 import no.nav.syfo.infrastructure.kafka.identhendelse.IdenthendelseService
 import no.nav.syfo.infrastructure.kafka.identhendelse.launchIdenthendelseConsumer
 import no.nav.syfo.infrastructure.kafka.kafkaAivenProducerConfig
+import no.nav.syfo.infrastructure.metric.METRICS_REGISTRY
 import org.apache.kafka.clients.producer.KafkaProducer
 import org.slf4j.LoggerFactory
 import java.util.concurrent.TimeUnit
@@ -35,18 +38,24 @@ fun main() {
     val environment = Environment()
     val logger = LoggerFactory.getLogger("ktor.application")
 
+    // Wire METRICS_REGISTRY into Micrometer's global registry so that counters registered
+    // on Metrics.globalRegistry (e.g. by shared libraries like isyfo-backend-common) are
+    // also exposed at /internal/metrics and scraped by Prometheus.
+    Metrics.addRegistry(METRICS_REGISTRY)
+
     val wellKnownInternalAzureAD =
         getWellKnown(
             wellKnownUrl = environment.azure.appWellKnownUrl,
         )
-    val azureAdClient =
-        AzureAdClient(
-            azureEnvironment = environment.azure,
-        )
-    val veilederTilgangskontrollClient =
-        VeilederTilgangskontrollClient(
-            azureAdClient = azureAdClient,
-            clientEnvironment = environment.clients.istilgangskontroll,
+    val azureAdClient = AzureAdClient()
+    val tilgangskontrollClient =
+        TilgangskontrollClient(
+            oboTokenProvider = azureAdClient,
+            clientConfig =
+                ClientConfig(
+                    baseUrl = environment.clients.istilgangskontroll.baseUrl,
+                    clientId = environment.clients.istilgangskontroll.clientId,
+                ),
         )
     val kafkaProducer =
         KafkaProducer<String, EsyfovarselHendelse>(
@@ -64,8 +73,8 @@ fun main() {
         )
     val dokarkivClient =
         DokarkivClient(
-            azureAdClient = azureAdClient,
-            dokarkivEnvironment = environment.clients.dokarkiv,
+            systemTokenProvider = azureAdClient,
+            clientConfig = environment.clients.dokarkiv,
         )
     val pdfClient =
         PdfGenClient(
@@ -117,7 +126,7 @@ fun main() {
                     environment = environment,
                     wellKnownInternalAzureAD = wellKnownInternalAzureAD,
                     database = applicationDatabase,
-                    veilederTilgangskontrollClient = veilederTilgangskontrollClient,
+                    tilgangskontrollClient = tilgangskontrollClient,
                     foresporselService = foresporselService,
                 )
                 monitor.subscribe(ApplicationStarted) {

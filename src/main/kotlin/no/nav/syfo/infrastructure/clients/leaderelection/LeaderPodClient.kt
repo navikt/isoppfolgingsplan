@@ -3,12 +3,12 @@ package no.nav.syfo.infrastructure.clients.leaderelection
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import io.ktor.client.*
-import io.ktor.client.engine.apache.*
+import io.ktor.client.engine.apache.Apache
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
 import kotlinx.coroutines.runBlocking
-import no.nav.syfo.util.configuredJacksonMapper
+import no.nav.syfo.common.util.configuredJacksonMapper
 import org.slf4j.LoggerFactory
 import java.net.InetAddress
 
