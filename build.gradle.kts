@@ -6,7 +6,7 @@ version = "0.0.1"
 val isyfoBackendCommonVersion = "0.0.48"
 
 val confluentVersion = "8.3.0"
-val flywayVersion = "11.20.3"
+val flywayVersion = "13.1.0"
 val hikariVersion = "7.1.0"
 val postgresVersion = "42.7.13"
 val postgresEmbeddedVersion = "2.2.2"
