@@ -17,9 +17,9 @@ val logstashEncoderVersion = "9.0"
 val micrometerRegistryVersion = "1.17.1"
 val jacksonDatatypeVersion = "2.22.2"
 val jacksonDatabindVersion = "3.2.2"
-val ktorVersion = "3.5.2"
+val ktorVersion = "3.6.0"
 val mockkVersion = "1.14.11"
-val nimbusJoseJwtVersion = "10.9.1"
+val nimbusJoseJwtVersion = "10.10"
 
 plugins {
     kotlin("jvm") version "2.4.20"
