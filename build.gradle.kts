@@ -3,7 +3,7 @@ import com.adarshr.gradle.testlogger.theme.ThemeType
 group = "no.nav.syfo"
 version = "0.0.1"
 
-val isyfoBackendCommonVersion = "0.0.48"
+val isyfoBackendCommonVersion = "1.3.3"
 
 val confluentVersion = "8.3.0"
 val flywayVersion = "13.11.1"
@@ -47,7 +47,7 @@ dependencies {
 
     implementation("no.nav.syfo:isyfo-backend-common:$isyfoBackendCommonVersion")
 
-    implementation("io.ktor:ktor-client-apache:$ktorVersion")
+    implementation("io.ktor:ktor-client-apache5:$ktorVersion")
     implementation("io.ktor:ktor-client-content-negotiation:$ktorVersion")
     implementation("io.ktor:ktor-serialization-jackson:$ktorVersion")
     implementation("io.ktor:ktor-server-auth-jwt:$ktorVersion")
