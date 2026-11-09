@@ -5,7 +5,7 @@ version = "0.0.1"
 
 val isyfoBackendCommonVersion = "1.3.3"
 
-val confluentVersion = "8.3.0"
+val confluentVersion = "8.4.0"
 val flywayVersion = "13.11.1"
 val hikariVersion = "7.1.0"
 val postgresVersion = "42.7.14"
@@ -74,10 +74,9 @@ dependencies {
     // Kafka
     implementation("org.apache.kafka:kafka_2.13:$kafkaVersion")
     constraints {
-        implementation("commons-beanutils:commons-beanutils") {
-            because("org.apache.kafka:kafka_2.13:$kafkaVersion -> https://www.cve.org/CVERecord?id=CVE-2025-48734")
+        implementation("at.yawk.lz4:lz4-java") {
             version {
-                require("1.11.0")
+                require("1.11.4")
             }
         }
     }
@@ -87,6 +86,13 @@ dependencies {
     implementation("tools.jackson.core:jackson-databind:$jacksonDatabindVersion")
 
     implementation("io.confluent:kafka-avro-serializer:$confluentVersion")
+    constraints {
+        implementation("com.google.guava:guava") {
+            version {
+                require("33.8.0-jre")
+            }
+        }
+    }
 
     // Tests
     testImplementation(testFixtures("no.nav.syfo:isyfo-backend-common:$isyfoBackendCommonVersion"))
