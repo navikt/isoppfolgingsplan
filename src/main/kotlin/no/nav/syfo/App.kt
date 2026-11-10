@@ -31,7 +31,6 @@ import no.nav.syfo.infrastructure.kafka.kafkaAivenProducerConfig
 import no.nav.syfo.infrastructure.metric.METRICS_REGISTRY
 import org.apache.kafka.clients.producer.KafkaProducer
 import org.slf4j.LoggerFactory
-import java.util.concurrent.TimeUnit
 
 fun main() {
     val applicationState = ApplicationState()
@@ -149,12 +148,11 @@ fun main() {
                             )
                     )
                 }
+                monitor.subscribe(ApplicationStopping) {
+                    applicationState.ready = false
+                    logger.info("Application is stopping")
+                }
             },
         )
-
-    Runtime.getRuntime().addShutdownHook(
-        Thread { server.stop(10, 10, TimeUnit.SECONDS) },
-    )
-
     server.start(wait = true)
 }
